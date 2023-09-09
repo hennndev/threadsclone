@@ -2,26 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+
+  /* background */
+  --bg-primary-light: #ffffff;
+  --bg-primary-dark: #101010;
+
+  --primary-light: rgb(55 65 81);
+  --primary-dark: rgb(229 231 235);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@layer components {
+  .container {
+    @apply max-w-[1100px] mx-auto
+  }
+  .flexx {
+    @apply flex items-center
+  }
+  .flex-center {
+    @apply flex items-center justify-center
+  }
+  .flex-between {
+    @apply flex items-center justify-between
+  }
+
+
+
+  /* navigations */
+  .nav-links {
+    @apply p-3 rounded-md hover:bg-gray-100 dark:hover:bg-[#222]
+  }
+  .nav-links-icon {
+    @apply text-[25px] lg:text-[27px] text-gray-500 dark:text-gray-400
+  }
 }
