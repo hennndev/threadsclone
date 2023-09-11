@@ -3,7 +3,7 @@ import NavLinks from '../ui/navLinks'
 
 const BottomBar = () => {
   return (
-    <div className="fixed bg-primary-light z-10 dark:bg-primary-dark lg:hidden bottom-0 w-full p-3">
+    <div className="fixed bg-white z-10 dark:bg-[#101010] lg:hidden bottom-0 w-full p-3">
       <NavLinks/>
     </div>
   )

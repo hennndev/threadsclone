@@ -20,18 +20,18 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class">
-          <main className="flex min-h-screen flex-col">
-            <Navbar/>
-            {children}
-            <BottomBar/>
-            <Footer/>
-          </main>
-        </ThemeProvider>
-      </body>
-    </html>
+      <html lang="en" suppressHydrationWarning>
+        <body className={inter.className}>
+          <ThemeProvider attribute="class">
+            <main className="flex min-h-screen flex-col bg-white dark:bg-[#101010]">
+              <Navbar/>
+              {children}
+              <BottomBar/>
+              <Footer/>
+            </main>
+          </ThemeProvider>
+        </body>
+      </html>
     </ClerkProvider>
   )
 }
