@@ -63,11 +63,12 @@ const Navbar = () => {
                   <p className="py-2 px-4 pb-3 text-sm cursor-pointer dark:text-gray-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]">Komunitas</p>
                 </PopoverTrigger>
                 <PopoverContent align="end" className="w-50 p-0">
-                  <OrganizationSwitcher appearance={{
-                    baseTheme: theme === "dark" ? dark : undefined,
-                    elements: {
-                      organizationSwitcherTrigger: "p-3"
-                    }
+                  <OrganizationSwitcher 
+                    appearance={{
+                      baseTheme: theme === "dark" ? dark : undefined,
+                      elements: {
+                        organizationSwitcherTrigger: "p-3"
+                      }
                   }}/>
                 </PopoverContent>
               </Popover>

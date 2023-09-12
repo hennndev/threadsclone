@@ -22,7 +22,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
-          <ThemeProvider attribute="class">
+          <ThemeProvider enableSystem={false} attribute="class">
             <main className="flex min-h-screen flex-col bg-white dark:bg-[#101010]">
               <Navbar/>
               {children}

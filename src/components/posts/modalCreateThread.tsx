@@ -14,6 +14,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Paperclip } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
 
 
 
@@ -40,7 +42,8 @@ const ModalCreateThread = ({children}: PropsTypes) => {
           </div>
           <div className="flex flex-col flex-1">
             <h3 className="font-medium mb-2 text-sm">Hennndev</h3>
-            <Input type="text" tabIndex={-1} placeholder="Mulai ulas .." className="border-none flex-1 outline-none focus:ring-0 bg-transparent font-medium text-gray-500 placeholder:text-gray-500 text-sm p-0"/>
+            <Textarea rows={2} tabIndex={-1} placeholder="Mulai ulas .." className="border-none flex-1 outline-none focus:ring-0 bg-transparent font-medium placeholder:text-gray-500 text-sm p-0"/>
+            <Paperclip className="mt-1 w-4 text-gray-500 cursor-pointer"/>
           </div>
         </div>
         <DialogFooter className="flex-between mt-10">

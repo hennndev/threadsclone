@@ -36,7 +36,7 @@ const Post = () => {
           </div>
         </div>
         <div className="mt-2">
-          <p className="leading-[1.5] text-gray-700 dark:text-gray-200">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil nobis neque perferendis veritatis necessitatibus ut magnam blanditiis unde vero ducimus.</p>
+          <p className="leading-[1.5] dark:text-gray-200">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil nobis neque perferendis veritatis necessitatibus ut magnam blanditiis unde vero ducimus.</p>
         </div>
         <div className="flexx space-x-3 mt-3">
           <Heart className="text-gray-600 dark:text-gray-300 cursor-pointer w-5"/>

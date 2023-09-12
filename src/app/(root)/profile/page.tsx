@@ -2,7 +2,11 @@ import React from 'react'
 
 const Profile = () => {
   return (
-    <div>page</div>
+    <section className="w-full flex-center p-5">
+      <div className="w-[550px]">
+        <h1>Profile Page</h1>
+      </div>
+    </section>
   )
 }
 
