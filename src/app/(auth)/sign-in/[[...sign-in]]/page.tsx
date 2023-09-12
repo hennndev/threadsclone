@@ -9,7 +9,7 @@ export const metadata = {
 export default function Signin() {
   return (
     <section className="flex-center h-screen">
-      <SignIn appearance={{
+      <SignIn redirectUrl="/onboarding" appearance={{
         baseTheme: dark
       }}/>
     </section>

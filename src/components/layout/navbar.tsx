@@ -4,7 +4,7 @@ import Link from 'next/link'
 import NavLinks from '../ui/navLinks'
 import { useTheme } from 'next-themes'
 import { FaThreads } from 'react-icons/fa6'
-import { SignOutButton, CreateOrganization, OrganizationSwitcher } from "@clerk/nextjs"
+import { SignOutButton, OrganizationSwitcher } from "@clerk/nextjs"
 import {
   Avatar,
   AvatarFallback,
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/popover"
 import { RiSunLine, RiMoonLine } from 'react-icons/ri'
 import { useRouter } from 'next/navigation'
+import { dark } from '@clerk/themes'
 
 
 const Navbar = () => {
@@ -56,8 +57,21 @@ const Navbar = () => {
             <PopoverContent align="end" className="w-40 p-0">
               <p className="py-2 px-4 pb-3 text-sm cursor-pointer dark:text-gray-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]">Lihat Profil</p>
               <p className="py-2 px-4 pb-3 text-sm cursor-pointer dark:text-gray-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]">Edit Profil</p>
-              <p className="py-2 px-4 pb-3 text-sm cursor-pointer dark:text-gray-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]">Komunitas</p>
-              <p className="py-2 px-4 pb-3 text-sm cursor-pointer dark:text-gray-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]" onClick={() => router.push("/create-organizations")}>Buat Komunitas</p>
+
+              <Popover>
+                <PopoverTrigger className="w-full text-left">
+                  <p className="py-2 px-4 pb-3 text-sm cursor-pointer dark:text-gray-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]">Komunitas</p>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-50 p-0">
+                  <OrganizationSwitcher appearance={{
+                    baseTheme: theme === "dark" ? dark : undefined,
+                    elements: {
+                      organizationSwitcherTrigger: "p-3"
+                    }
+                  }}/>
+                </PopoverContent>
+              </Popover>
+             
               <SignOutButton>
                 <p className="py-2 px-4 pb-3 text-sm cursor-pointer text-red-600 dark:text-red-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]">Logout</p>
               </SignOutButton>

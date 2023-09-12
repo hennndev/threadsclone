@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from "@/components/ui/button"
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import * as z from 'zod'
 import {
   Form,
@@ -62,11 +62,11 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
               <FormLabel className="mb-3">
                 {field.value ? (
                   <div className="relative w-[150px] h-[150px] rounded-full">
-                    <Image fill sizes="auto" src={field.value} className="h-full object-contains rounded-full" alt="profile_photo"/>
+                    <Image fill priority sizes="auto" src={field.value} className="h-full object-contains rounded-full" alt="profile_photo"/>
                   </div>
                 ): (
                   <div className="relative h-[150px]">
-                    <Image fill sizes="auto" src={userData.image} className="h-full object-contains rounded-full" alt="profile_photo"/>
+                    <Image fill priority sizes="auto" src={userData.image} className="h-full object-contains rounded-full" alt="profile_photo"/>
                   </div>
                 )}
               </FormLabel>
