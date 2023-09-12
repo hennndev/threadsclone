@@ -2,7 +2,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { Input } from "@/components/ui/input"
-import Modal from '@/components/posts/modalCreateThread'
+import ModalCreateThread from '@/components/posts/modalCreateThread'
 
 
 type PropsTypes = {
@@ -11,7 +11,7 @@ type PropsTypes = {
 
 const CreateThread = ({user}: any) => {
   return (
-    <Modal dialogTitle="Create thread" dialogDesc="Create new thread" btnTitle="Kirim">
+    <ModalCreateThread>
       <div className="w-full flexx pb-4 border-b border-gray-200 dark:border-gray-700 mb-10">
         <div className="relative w-[30px] h-[30px] rounded-full">
           <Image fill sizes="auto" src="https://i.pinimg.com/originals/fd/14/a4/fd14a484f8e558209f0c2a94bc36b855.png" 
@@ -24,7 +24,7 @@ const CreateThread = ({user}: any) => {
           <button className="border border-gray-300 text-gray-500 dark:border-[#2b2b2b] px-3 py-2 rounded-lg bg-transparent text-sm cursor-not-allowed">Kirim</button>
         </div>
       </div>
-    </Modal>
+    </ModalCreateThread>
   )
 }
 

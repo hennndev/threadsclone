@@ -10,6 +10,11 @@ interface UserInfoTypes {
   bio: string
 }
 
+
+export const metadata = {
+  title: "Onboarding"
+}
+
 const Onboarding = async () => {
 
   const user: any = await currentUser()

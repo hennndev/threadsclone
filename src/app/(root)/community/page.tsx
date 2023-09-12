@@ -1,10 +1,9 @@
-"use client"
 import React from 'react'
 import { RiSearch2Line } from 'react-icons/ri'
-import { useRouter } from 'next/navigation'
+import { CreateOrganization } from '@clerk/nextjs'
 
 const Community = () => {
-  const router = useRouter()
+
   return (
     <section className="w-full flex-center p-5">
       <div className="w-[550px]">
@@ -12,7 +11,7 @@ const Community = () => {
           <RiSearch2Line className="text-xl text-gray-500 mr-5"/>
           <input type="text" className="flex-1 bg-transparent outline-none text-gray-500 border-none focus:ring-0" placeholder="Cari komunitas"/>
         </div>
-        <button onClick={() => router.push("/create-organizations")} className="mt-3 border border-gray-300 dark:border-gray-600 rounded-xl p-3 w-full">Buat komunitas baru</button>
+        <button className="mt-3 border border-gray-300 dark:border-gray-600 rounded-xl p-3 w-full">Buat komunitas baru</button>
       </div>
     </section>
   )

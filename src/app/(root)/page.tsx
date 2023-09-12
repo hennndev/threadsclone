@@ -1,7 +1,12 @@
 import React from 'react'
+import { currentUser } from '@clerk/nextjs'
 import Posts from '@/components/posts/posts'
 import CreateThread from '@/components/posts/createThread'
-import { currentUser } from '@clerk/nextjs'
+
+
+export const metadata = {
+  title: "Beranda"
+}
 
 const Home = async () => {
 

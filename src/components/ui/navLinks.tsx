@@ -7,7 +7,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Badge } from '@/components/ui/badge'
 import { usePathname } from 'next/navigation'
+import ModalCreateThread from '../posts/modalCreateThread'
 import { RiHomeSmile2Line, RiSearch2Line, RiEditBoxLine, RiHeart3Line, RiUser3Line, RiGroupLine } from 'react-icons/ri'
 
 const NavLinks = () => {
@@ -24,7 +26,7 @@ const NavLinks = () => {
               </Link> 
             </TooltipTrigger>
             <TooltipContent>
-              <p>Home</p>
+              <p>Beranda</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -37,34 +39,37 @@ const NavLinks = () => {
               </Link>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Search</p>
+              <p>Cari</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
 
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link className={`nav-links lg:mr-10 ${path[1] == "new-post" ? "bg-gray-100 dark:bg-[#222]" : ""}`} href="/search">
-                <RiEditBoxLine className="nav-links-icon"/>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>New Post</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <ModalCreateThread>
+                <TooltipTrigger asChild>
+                  <div className="nav-links lg:mr-10 cursor-pointer">
+                    <RiEditBoxLine className="nav-links-icon"/>
+                  </div>
+                </TooltipTrigger>
+              </ModalCreateThread>
+              <TooltipContent>
+                <p>Buat thread</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link className={`nav-links lg:mr-10 ${path[1] == "activity" ? "bg-gray-100 dark:bg-[#222]" : ""}`} href="/activity">
+              <Link className={`relative nav-links lg:mr-10 ${path[1] == "activity" ? "bg-gray-100 dark:bg-[#222]" : ""}`} href="/activity">
                 <RiHeart3Line className="nav-links-icon"/>
+                <Badge variant="destructive" className="absolute top-0 right-1">1</Badge>
               </Link>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Activity</p>
+              <p>Aktivitas</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -77,7 +82,7 @@ const NavLinks = () => {
               </Link>
             </TooltipTrigger>
             <TooltipContent>
-              <p>New Post</p>
+              <p>Komunitas</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -91,7 +96,7 @@ const NavLinks = () => {
               </Link>
             </TooltipTrigger>
             <TooltipContent>
-              <p>New Post</p>
+              <p>Profil</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -1,7 +1,8 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from "@/components/ui/button"
+import { useRouter } from 'next/router'
 import * as z from 'zod'
 import {
   Form,
@@ -13,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import Image from 'next/image'
+import { Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -33,6 +35,8 @@ interface PropsTypes {
 
 const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
 
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const form = useForm({
     resolver: zodResolver(UserValidation),
     defaultValues: {
@@ -44,7 +48,7 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
   })
 
   const onSubmit = (values: z.infer<typeof UserValidation>) => {
-    console.log(values)
+    router.push("/")
   }
 
   return (
@@ -112,13 +116,17 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
                 <Textarea rows={8} className="bg-[#151515] border-none outline-none text-gray-300" placeholder="Your bio" {...field} />
               </FormControl>
               <FormDescription>
-                *Optional
+                *Optional. You can skip this field
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button variant="default" className="w-full" type="submit">{btnTitle}</Button>
+        {/* <Button disabled>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Please wait
+        </Button> */}
       </form>
     </Form>
   )
