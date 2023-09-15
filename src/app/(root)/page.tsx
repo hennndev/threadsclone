@@ -10,7 +10,7 @@ export const metadata = {
 }
 
 const Home = async () => {
-  const threads: ThreadsTypes[] = await getThreads()
+  const threads: any = await getThreads()
   const userLoggedIn = await currentUser()
   if(!userLoggedIn) return null
   const user = await fetchUser(userLoggedIn.id)
