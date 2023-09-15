@@ -5,6 +5,7 @@ const inter = Inter({ subsets: ['latin'] })
 import { ClerkProvider } from '@clerk/nextjs'
 import Footer from '@/components/layout/footer'
 import Navbar from '@/components/layout/navbar'
+import { Toaster } from '@/components/ui/toaster'
 import BottomBar from '@/components/layout/bottomBar'
 import ThemeProvider from '@/components/layout/themeProvider'
 
@@ -23,6 +24,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
           <ThemeProvider enableSystem={false} attribute="class">
+            <Toaster />
             <main className="flex min-h-screen flex-col bg-white dark:bg-[#101010]">
               <Navbar/>
               {children}

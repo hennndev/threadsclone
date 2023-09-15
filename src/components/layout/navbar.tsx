@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import NavLinks from '../ui/navLinks'
+import NavLinks from '../shared/navLinks'
 import { useTheme } from 'next-themes'
 import { FaThreads } from 'react-icons/fa6'
 import { SignOutButton, OrganizationSwitcher } from "@clerk/nextjs"
@@ -25,7 +25,6 @@ const Navbar = () => {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
   const handleTheme = () => theme === 'dark' ? setTheme('light') : setTheme('dark')
-
 
   useEffect(() => {
     setMounted(true)

@@ -1,5 +1,6 @@
+"use client"
 import React from 'react'
-import NavLinks from '../ui/navLinks'
+import NavLinks from '../shared/navLinks'
 
 const BottomBar = () => {
   return (

@@ -1,7 +1,8 @@
 import React from 'react'
-import AccountProfile from '@/components/forms/AccountProfile'
 import { currentUser } from '@clerk/nextjs'
-import { User } from '@clerk/backend/dist/types/api'
+import { checkUserExist } from '@/lib/actions/user.actions'
+import AccountProfile from '@/components/forms/AccountProfile'
+import { redirect } from 'next/navigation'
 
 interface UserInfoTypes {
   _id: string
@@ -19,17 +20,15 @@ const Onboarding = async () => {
 
   const user: any = await currentUser()
 
-  // let userInfo = {} as  UserInfoTypes
+  const checkUser = await checkUserExist(user.id)
+  if(checkUser?.onboarded) {
+    redirect("/")
+  }
 
   const userData = {
     id: user.id,
-    // @ts-ignore
-    objectId: "test id",
-    // @ts-ignore
     image: user?.imageUrl,
-    // @ts-ignore
     username: user?.username,
-    // @ts-ignore
     name: user?.firstName,
     bio: ""
   }

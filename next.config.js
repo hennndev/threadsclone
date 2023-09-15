@@ -1,7 +1,24 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverActions: true,
+    serverComponentsExternalPackages: ["mongoose"]
+  },
   images: {
-    domains: ["i.pinimg.com", "img.clerk.com"]
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "i.pinimg.com"
+      },
+      {
+        protocol: "https",
+        hostname: "img.clerk.com"
+      },
+      {
+        protocol: "https",
+        hostname: "utfs.io"
+      }
+    ]
   }
 }
 

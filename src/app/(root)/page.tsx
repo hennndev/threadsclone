@@ -1,21 +1,29 @@
 import React from 'react'
 import { currentUser } from '@clerk/nextjs'
-import Posts from '@/components/posts/posts'
-import CreateThread from '@/components/posts/createThread'
-
+import Threads from '@/components/threads/threads'
+import { fetchUser } from '@/lib/actions/user.actions'
+import { getThreads } from '@/lib/actions/threads.actions'
+import CreateThread from '@/components/threads/createThread'
 
 export const metadata = {
   title: "Beranda"
 }
 
 const Home = async () => {
+  const threads: ThreadsTypes[] = await getThreads()
+  const userLoggedIn = await currentUser()
+  if(!userLoggedIn) return null
+  const user = await fetchUser(userLoggedIn.id)
 
-  const user = await currentUser()
+  //create thread ✅
+  //show threads ❌
+  //infinite scroll ❌
+
   return (
     <section className="w-full flex-center p-5">
       <div className="w-[550px]">
-        <CreateThread/>
-        <Posts/>
+        <CreateThread userId={user._id} username={user.username} userImageUrl={user.image.imageUrl}/>
+        <Threads data={threads}/>
       </div>
     </section>
   )

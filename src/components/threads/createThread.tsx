@@ -2,19 +2,21 @@
 import React from 'react'
 import Image from 'next/image'
 import { Input } from "@/components/ui/input"
-import ModalCreateThread from '@/components/posts/modalCreateThread'
+import ModalCreateThread from '@/components/shared/modalCreateThread'
 
 
 type PropsTypes = {
-  user: any
+  userId: string
+  username: string
+  userImageUrl: string
 }
 
-const CreateThread = ({user}: any) => {
+const CreateThread = (props: PropsTypes) => {
   return (
-    <ModalCreateThread>
+    <ModalCreateThread {...props}>
       <div className="w-full flexx pb-4 border-b border-gray-200 dark:border-gray-700 mb-10">
         <div className="relative w-[30px] h-[30px] rounded-full">
-          <Image fill sizes="auto" src="https://i.pinimg.com/originals/fd/14/a4/fd14a484f8e558209f0c2a94bc36b855.png" 
+          <Image fill sizes="auto" src={props.userImageUrl} 
             alt="avatar" 
             quality={75}
             className="w-full h-full object-cover rounded-full"/>

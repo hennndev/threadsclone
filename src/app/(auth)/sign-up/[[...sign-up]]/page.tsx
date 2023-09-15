@@ -7,7 +7,7 @@ export const metadata = {
 export default function Signup() {
   return (
     <section className="flex-center h-screen">
-      <SignUp redirectUrl="/onboarding"/>
+      <SignUp/>
     </section>
   )
 }

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState, useEffect, HTMLInputTypeAttribute } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
@@ -15,16 +15,20 @@ import {
 } from "@/components/ui/form"
 import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserValidation } from '@/lib/validations/user'
+import { upsertUser } from '@/lib/actions/user.actions'
+import { useUploadThing } from '@/lib/functions/uploadthing'
+import ButtonLoading from '@/components/shared/buttonLoading'
 
 
 interface PropsTypes {
   userData: {
     id: string
-    objectId: string
+    objectId?: string
     image: string
     username: string
     name: string
@@ -36,7 +40,7 @@ interface PropsTypes {
 const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
 
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const pathname = usePathname()
   const form = useForm({
     resolver: zodResolver(UserValidation),
     defaultValues: {
@@ -46,9 +50,45 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
       bio: userData?.bio || ""
     }
   })
+  const [file, setFile] = useState<File[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { startUpload } = useUploadThing("media")
 
-  const onSubmit = (values: z.infer<typeof UserValidation>) => {
-    router.push("/")
+  const handleImage = (e: ChangeEvent<HTMLInputElement>, fieldChange: (value: string) => void) => {
+    if(e.target.files && e.target.files.length > 0) {
+      setFile(Array.from(e.target.files))
+      const file = e.target.files[0] as File
+      const readerImg: FileReader = new FileReader()
+      readerImg.readAsDataURL(file)
+      readerImg.onloadend = () => {
+        const result: string = readerImg.result as string
+        fieldChange(result)
+      }
+    }
+  }
+
+  const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+    setIsLoading(true)
+    const blob = values.profile_photo
+    if(blob) {
+      const imgResult = await startUpload(file)
+      if(imgResult) {
+        await upsertUser({
+          id: userData.id,
+          name: values.name,
+          username: values.username,
+          image: {
+            imageKey: imgResult[0].key,
+            imageUrl: imgResult[0].url
+          },
+          path: pathname,
+          bio: values.bio
+        }).then(() => {
+          setIsLoading(false)
+          router.push("/")
+        })
+      }
+    }
   }
 
   return (
@@ -74,7 +114,7 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
                 Upload Image
               </FormLabel>
               <FormControl className="flex-1">
-                <Input type="file" id="profile_photo" className="bg-[#151515] border-none outline-none text-gray-300 hidden" placeholder="Your name" {...field} />
+                <Input type="file" accept="image/*" id="profile_photo" className="bg-[#151515] border-none outline-none text-gray-300 hidden" placeholder="Your name" onChange={(e) => handleImage(e, field.onChange)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,11 +162,11 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
             </FormItem>
           )}
         />
-        <Button variant="default" className="w-full" type="submit">{btnTitle}</Button>
-        {/* <Button disabled>
+        {!isLoading ? <Button variant="default" className="w-full" type="submit">{btnTitle}</Button> : ""}
+        {isLoading ? <Button disabled>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Please wait
-        </Button> */}
+        </Button> : ""}
       </form>
     </Form>
   )
