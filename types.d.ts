@@ -1,19 +1,35 @@
 
-type ThreadTypes = {
-  _id: string
-  text?: string | null
-  userPost: any
+interface ThreadTypes {
+  _id: string 
+  text: string | null 
+  userPost: UserPostTypes
   image?: {
     imageKey: string
     imageUrl: string
-  } | null
-  community: string | null
-  likes: string[]
-  createdAt: Date
-  parentId?: string
-  isCommented: string
+  } | null 
+  community: string | null 
+  likes: string[] 
+  isCommented: string 
+  parentId?: string 
+  createdAt: Date 
 }
-
-type ThreadsTypes = ThreadTypes & {
+interface CommentsType {
   comments: ThreadTypes[]
+}
+type ThreadsTypes = ThreadTypes & CommentsType
+
+interface UserPostTypes {
+  _id: string
+  id: string
+  name: string
+  username: string
+  bio: string
+  onboarded: boolean
+  threads: ThreadsTypes[]
+  createdAt: Date
+  communities: string[]
+  image: {
+    imageKey: string
+    imageUrl: string
+  }
 }

@@ -1,4 +1,3 @@
-import React from 'react'
 import { currentUser } from '@clerk/nextjs'
 import Threads from '@/components/threads/threads'
 import { fetchUser } from '@/lib/actions/user.actions'
@@ -10,14 +9,16 @@ export const metadata = {
 }
 
 const Home = async () => {
-  const threads: any = await getThreads()
+  const threads: Awaited<ThreadsTypes[]> = await getThreads()
   const userLoggedIn = await currentUser()
   if(!userLoggedIn) return null
   const user = await fetchUser(userLoggedIn.id)
 
   //create thread ✅
-  //show threads ❌
+  //show threads ✅
   //infinite scroll ❌
+
+  console.log(threads)
 
   return (
     <section className="w-full flex-center p-5">

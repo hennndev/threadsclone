@@ -1,13 +1,5 @@
 "use client"
 import React, { useState, ChangeEvent } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -17,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { uploadThread } from '@/lib/actions/threads.actions'
 import { useUploadThing } from '@/lib/functions/uploadthing'
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 type PropsTypes = {
   children: React.ReactNode
@@ -169,7 +162,7 @@ const ModalCreateThread = ({children, userId, username, userImageUrl}: PropsType
             {!isLoading && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <p className="text-sm text-gray-500 mr-10 cursor-pointer">{isCommented} bisa membalas</p>
+                  <p className="text-sm text-gray-500 mr-10 cursor-pointer">{isCommented === "everyone" ? "Siapa saja" : "Pengikut"} bisa membalas</p>
                 </PopoverTrigger>
                 <PopoverContent className="w-50 p-0">
                   <p className={`py-2 px-4 pb-3 text-sm cursor-pointer border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222] ${isCommented === "Siapa saja" ? "border-transparent bg-gray-100 dark:bg-[#222]" : "text-gray-600 dark:text-gray-300"}`} onClick={() => setIsCommented("everyone")}>Siapa saja</p>

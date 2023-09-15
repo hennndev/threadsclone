@@ -42,8 +42,12 @@ const userSchema = new Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Community"
     }
-  ]
-}, {timestamps: true})
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+})
 
 
 export const Users = mongoose.models.Users || mongoose.model("Users", userSchema)

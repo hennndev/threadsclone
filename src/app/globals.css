@@ -86,4 +86,9 @@
   .nav-links-icon {
     @apply text-[25px] lg:text-[27px] text-gray-500 dark:text-gray-400
   }
+
+  /* popover */
+  .list-popover {
+    @apply py-2 px-4 pb-3 text-sm cursor-pointer dark:text-gray-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]
+  }
 }

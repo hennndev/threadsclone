@@ -2,12 +2,32 @@
 import { connectDB } from "../mongoose"
 import { Users } from "../models/users.model"
 import { Threads } from "../models/threads.model"
+import { revalidatePath } from "next/cache"
 
 
-export async function getThreads() {
+export async function getThreads(): Promise<Array<any>> {
   await connectDB()
+  // limit
+  // skip
   try {
-    const threads = await Threads.find({}).sort({createdAt: -1}).select("-__v").populate(["userPost"])
+    const threads = await Threads.find({}).sort({createdAt: "desc"}).select("-__v")
+      .populate({ path: "userPost", model: Users, select: "-__v -name -id -createdAt -onboarded -threads -communities"})
+      .populate({path: "likes", model: Users, select: "-__v -name -bio -id -createdAt -onboarded -threads -communities"})
+      .populate({
+        path: "comments",
+        populate: [
+          {
+            path: "userPost",
+            model: Users,
+            select: "-__v -name -bio -id -createdAt -onboarded -threads -communities"
+          },
+          {
+            path: "likes",
+            model: Users,
+            select: "-__v -name -bio -id -createdAt -onboarded -threads -communities"
+          },
+        ]
+      })
     return threads
   } catch (error: any) {
     throw new Error(`Failed get threads: ${error.message}`)
@@ -34,6 +54,8 @@ export async function uploadThread({text, userId, image = null, isCommented}: {
     await Users.updateOne({_id: userId}, {
       $push: {threads: newThread._id}
     })
+
+    revalidatePath("/")
   } catch (error: any) {
     throw new Error(`Failed upload new thread: ${error.message}`)
   }

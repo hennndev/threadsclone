@@ -1,33 +1,22 @@
 "use client"
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { links } from '@/constants/links'
 import { usePathname } from 'next/navigation'
 import ModalCreateThread from '@/components/shared/modalCreateThread'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
+type PropsTypes = {
+  user: {
+    id: string
+    username: string
+    image: string
+  }
+}
 
-const NavLinks = () => {
-
+const NavLinks = ({user}: PropsTypes) => {
   const pathname = usePathname()
   const path = pathname.split("/")
-  const [user, setUser] = useState<Record<string, string>>({}) 
-  
-  useEffect(() => {
-    async function getCurrentUser() {
-      const res = await fetch("http://localhost:3000/api/users")
-      const data = await res.json()
-      if(data.user) {
-        setUser(data.user)
-      }
-    }
-   getCurrentUser()
-  }, [])
   return (
     <nav className="justify-between lg:ml-20 lg:justify-normal flexx">
       {links.map(({Icon, ...obj}) => (
@@ -43,8 +32,19 @@ const NavLinks = () => {
               </ModalCreateThread>
             ) : (
               <TooltipTrigger asChild>
-                <Link className={`nav-links lg:mr-10 ${path[1] === obj.path ?  "bg-gray-100 dark:bg-[#222]" : ""} `} href={`/${obj.path}`}>
-                  <Icon className="nav-links-icon"/>
+                <Link className={`nav-links lg:mr-10 
+                  ${obj.path === "profile" ? 
+                    path[1] === user.username ? "bg-gray-100 dark:bg-[#222]" : "" 
+                    : 
+                    path[1] === obj.path ?  "bg-gray-100 dark:bg-[#222]" : ""
+                  }`} 
+                  href={`/${obj.path === "profile" ? user.username : obj.path}`}>
+                  <Icon className={`nav-links-icon 
+                    ${obj.path === "profile" ? 
+                      path[1] === user.username ? "text-gray-900 dark:text-gray-100" : "" 
+                      : 
+                      path[1] === obj.path ?  "text-gray-900 dark:text-gray-100" : ""
+                    }`}/>
                 </Link> 
               </TooltipTrigger>
             )}

@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 import Image from 'next/image'
 import {
   Popover,
@@ -27,10 +28,10 @@ const Thread = ({data}: PropsTypes) => {
         <div className="flex-between">
           <h2 className="text-gray-700 dark:text-gray-200 font-semibold">{data.userPost.username}</h2>
           <div className="flexx">
-            <p className="text-sm text-gray-500 mr-3 font-medium">9 Jam</p>
+            <p className="text-sm text-gray-500 mr-3 font-medium">{moment(data.createdAt).startOf('minutes').fromNow()}</p>
             <Popover>
               <PopoverTrigger asChild>
-                <MoreHorizontal className="cursor-pointer"/>
+                <MoreHorizontal className="cursor-pointer w-5 h-5"/>
               </PopoverTrigger>
               <PopoverContent align="end" className="w-50 p-0">
                 <p className="py-2 px-4 pb-3 text-sm cursor-pointer text-gray-600 dark:text-gray-300 border-b border-[#ccc] dark:border-[#2b2b2b] hover:border-transparent hover:bg-gray-100 dark:hover:bg-[#222]">Sembunyikan</p>
