@@ -17,13 +17,12 @@ const Home = async () => {
   //create thread ✅
   //show threads ✅
   //infinite scroll ❌
-
-  console.log(threads)
+  
 
   return (
     <section className="w-full flex-center p-5">
       <div className="w-[550px]">
-        <CreateThread userId={user._id} username={user.username} userImageUrl={user.image.imageUrl}/>
+        <CreateThread userId={user._id.toString()} username={user.username} userImageUrl={user.image.imageUrl}/>
         <Threads data={threads}/>
       </div>
     </section>

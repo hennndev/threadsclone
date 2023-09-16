@@ -11,12 +11,12 @@ type PropsTypes = {
   userImageUrl: string
 }
 
-const CreateThread = (props: PropsTypes) => {
+const CreateThread = ({userId, username, userImageUrl}: PropsTypes) => {
   return (
-    <ModalCreateThread {...props}>
+    <ModalCreateThread userId={userId} username={username} userImageUrl={userImageUrl}>
       <div className="w-full flexx pb-4 border-b border-gray-200 dark:border-gray-700 mb-10">
         <div className="relative w-[30px] h-[30px] rounded-full">
-          <Image fill sizes="auto" src={props.userImageUrl} 
+          <Image fill sizes="auto" src={userImageUrl} 
             alt="avatar" 
             quality={75}
             className="w-full h-full object-cover rounded-full"/>

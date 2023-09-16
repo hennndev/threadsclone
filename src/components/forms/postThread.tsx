@@ -1,8 +1,8 @@
 "use client"
 import React, { ChangeEvent, useState } from 'react'
 import Image from 'next/image'
-import { Textarea } from '../ui/textarea'
 import { Paperclip, X } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
 
 type PropsTypes = {
   username: string
@@ -13,16 +13,9 @@ type PropsTypes = {
   setFile: (value: File[]) => void
 }
 
-const PostThread = ({
-  username,
-  userImageUrl,
-  caption,
-  setCaption,
-  file,
-  setFile
-}: PropsTypes) => {
-  const [prevImage, setPrevImage] = useState<string | null>(null)
+const PostThread = ({ username, userImageUrl, caption, setCaption, file, setFile }: PropsTypes) => {
 
+  const [prevImage, setPrevImage] = useState<string | null>(null)
   const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.files)
     if(e.target.files && e.target.files.length > 0) {
