@@ -1,8 +1,7 @@
 "use client"
-import React, { ChangeEvent, useState, useEffect } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import * as z from 'zod'
 import Image from 'next/image'
-import { useUser } from '@/store/user'
 import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
