@@ -1,14 +1,19 @@
 import React from 'react'
+import { redirect } from 'next/navigation'
 import { currentUser } from '@clerk/nextjs'
 import { checkUserExist } from '@/lib/actions/user.actions'
-import AccountProfile from '@/components/forms/AccountProfile'
-import { redirect } from 'next/navigation'
+import AccountProfile from '@/components/forms/accountProfile'
 
 interface UserInfoTypes {
-  _id: string
+  id: string
+  image: {
+    imageKey?: string
+    imageUrl: string
+  } | null
   username: string
   name: string
   bio: string
+  onboarded: boolean
 }
 
 
@@ -19,18 +24,18 @@ export const metadata = {
 const Onboarding = async () => {
 
   const user: any = await currentUser()
-
-  const checkUser = await checkUserExist(user.id)
-  if(checkUser?.onboarded) {
-    redirect("/")
-  }
-
+  const userDB: UserInfoTypes | null = await checkUserExist(user.id)
+  
   const userData = {
-    id: user.id,
-    image: user?.imageUrl,
-    username: user?.username,
-    name: user?.firstName,
-    bio: ""
+    id: userDB?.id || user.id,
+    image: userDB?.image?.imageUrl || user?.imageUrl,
+    username: userDB?.username || user?.username,
+    name: userDB?.name || user?.firstName,
+    bio: userDB?.bio || "",
+    onboarded: userDB?.onboarded || false
+  }
+  if(userDB) {
+    redirect("/")
   }
 
   return (

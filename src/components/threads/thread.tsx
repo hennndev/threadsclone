@@ -1,32 +1,33 @@
 import React from 'react'
 import moment from 'moment'
+import Link from 'next/link'
 import Image from 'next/image'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import HoverUser from './hoverUser'
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Heart, MessageSquare, Send, MoreHorizontal, Repeat2 } from 'lucide-react'
 
 type PropsTypes = {
   data: ThreadsTypes
+  isLoggedIn: boolean
 }
 
-const Thread = ({data}: PropsTypes) => {
+const Thread = ({data, isLoggedIn}: PropsTypes) => {
   return (
-    <div className="flex pb-4 border-b border-gray-200 dark:border-gray-700 mb-4">
+    <Link href={`/${data.userPost.username}/threads/${data._id}`} className="flex pb-4 border-b border-gray-200 dark:border-gray-700 mb-4 cursor-pointer">
       <div className="relative w-[30px] h-[30px] rounded-full mr-4">
         <Image 
           fill
           sizes="auto" 
-          src={data.userPost.image.imageUrl ? data.userPost.image.imageUrl : "https://i.pinimg.com/originals/fd/14/a4/fd14a484f8e558209f0c2a94bc36b855.png"} 
+          src={data.userPost.image.imageUrl} 
           alt="sample" 
           quality={75}
           className="w-full h-full object-cover rounded-full"/>
       </div>
       <div className="flex flex-1 flex-col">
         <div className="flex-between">
-          <h2 className="text-gray-700 dark:text-gray-200 font-semibold">{data.userPost.username}</h2>
+          <HoverUser userData={data.userPost} isLoggedIn={isLoggedIn}>
+            <h2 className="text-gray-700 dark:text-gray-200 font-semibold hover:underline">{data.userPost.username}</h2>
+          </HoverUser>
           <div className="flexx">
             <p className="text-sm text-gray-500 mr-3 font-medium">{moment(data.createdAt).startOf('minutes').fromNow()}</p>
             <Popover>
@@ -62,7 +63,7 @@ const Thread = ({data}: PropsTypes) => {
           </>
         ) : null}
       </div>
-    </div>
+    </Link>
   )
 }
 

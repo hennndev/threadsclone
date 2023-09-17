@@ -3,13 +3,14 @@ import Thread from './thread'
 
 type PropsTypes = {
   data: ThreadsTypes[]
+  isLoggedIn: string
 }
 
-const Threads = ({data}: PropsTypes) => {
+const Threads = ({data, isLoggedIn}: PropsTypes) => {
   return (
     <section className="flex flex-col">
       {data.map((data) => (
-        <Thread key={data._id} data={data}/>
+        <Thread isLoggedIn={isLoggedIn === data.userPost.id} key={data._id} data={data}/>
       ))}
     </section>
   )

@@ -11,20 +11,20 @@ export async function getThreads(): Promise<Array<any>> {
   // skip
   try {
     const threads = await Threads.find({}).sort({createdAt: "desc"}).select("-__v")
-      .populate({ path: "userPost", model: Users, select: "-__v -name -id -createdAt -onboarded -threads -communities"})
-      .populate({path: "likes", model: Users, select: "-__v -name -bio -id -createdAt -onboarded -threads -communities"})
+      .populate({ path: "userPost", model: Users, select: "-__v -id -createdAt -onboarded -threads -communities"})
+      .populate({path: "likes", model: Users, select: "-__v -id -createdAt -onboarded -threads -communities"})
       .populate({
         path: "comments",
         populate: [
           {
             path: "userPost",
             model: Users,
-            select: "-__v -name -bio -id -createdAt -onboarded -threads -communities"
+            select: "-__v -id -createdAt -onboarded -threads -communities"
           },
           {
             path: "likes",
             model: Users,
-            select: "-__v -name -bio -id -createdAt -onboarded -threads -communities"
+            select: "-__v -id -createdAt -onboarded -threads -communities"
           },
         ]
       })
@@ -34,7 +34,7 @@ export async function getThreads(): Promise<Array<any>> {
   }
 }
 
-export async function uploadThread({text, userId, image = null, isCommented}: {
+export async function uploadThread({text, userId, image = null, isCommented, path}: {
   text: string | null
   userId: string
   image: {
@@ -42,6 +42,7 @@ export async function uploadThread({text, userId, image = null, isCommented}: {
     imageUrl: string
   } | null,
   isCommented: string
+  path: string
 }): Promise<void> {
   await connectDB()
   try {
@@ -54,8 +55,12 @@ export async function uploadThread({text, userId, image = null, isCommented}: {
     await Users.updateOne({_id: userId}, {
       $push: {threads: newThread._id}
     })
+    if(path !== "/" && path !== '/[user]') {
+      revalidatePath("/")
+    } else {
+      revalidatePath(path)
+    }
 
-    revalidatePath("/")
   } catch (error: any) {
     throw new Error(`Failed upload new thread: ${error.message}`)
   }

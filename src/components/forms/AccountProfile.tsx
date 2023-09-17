@@ -1,28 +1,20 @@
 "use client"
-import React, { ChangeEvent, useState, useEffect, HTMLInputTypeAttribute } from 'react'
-import { useForm } from 'react-hook-form'
-import { Button } from "@/components/ui/button"
-import { useRouter } from 'next/navigation'
+import React, { ChangeEvent, useState, useEffect } from 'react'
 import * as z from 'zod'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
 import Image from 'next/image'
+import { useUser } from '@/store/user'
 import { Loader2 } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
+import { usePathname } from 'next/navigation'
+import { Button } from "@/components/ui/button"
 import { Textarea } from '@/components/ui/textarea'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserValidation } from '@/lib/validations/user'
 import { upsertUser } from '@/lib/actions/user.actions'
 import { useUploadThing } from '@/lib/functions/uploadthing'
-import ButtonLoading from '@/components/shared/buttonLoading'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
 
 interface PropsTypes {
@@ -33,6 +25,7 @@ interface PropsTypes {
     username: string
     name: string
     bio: string
+    onboarded: boolean
   },
   btnTitle: string
 }
@@ -41,6 +34,8 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
 
   const router = useRouter()
   const pathname = usePathname()
+  const [file, setFile] = useState<File[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const form = useForm({
     resolver: zodResolver(UserValidation),
     defaultValues: {
@@ -50,8 +45,6 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
       bio: userData?.bio || ""
     }
   })
-  const [file, setFile] = useState<File[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { startUpload } = useUploadThing("media")
 
   const handleImage = (e: ChangeEvent<HTMLInputElement>, fieldChange: (value: string) => void) => {
@@ -71,15 +64,31 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
     setIsLoading(true)
     const blob = values.profile_photo
     if(blob) {
-      const imgResult = await startUpload(file)
-      if(imgResult) {
+      if(file.length > 0 && file) {
+        const imgResult = await startUpload(file)
+        if(imgResult) {
+          await upsertUser({
+            id: userData.id,
+            name: values.name,
+            username: values.username,
+            image: {
+              imageKey: imgResult[0].key,
+              imageUrl: imgResult[0].url
+            },
+            path: pathname,
+            bio: values.bio
+          }).then(() => {
+            setIsLoading(false)
+            router.push("/")
+          })
+        }
+      } else {
         await upsertUser({
           id: userData.id,
           name: values.name,
           username: values.username,
           image: {
-            imageKey: imgResult[0].key,
-            imageUrl: imgResult[0].url
+            imageUrl: values.profile_photo
           },
           path: pathname,
           bio: values.bio
@@ -87,7 +96,7 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
           setIsLoading(false)
           router.push("/")
         })
-      }
+        }
     }
   }
 

@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Textarea } from '../ui/textarea'
 import { Paperclip, X } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
 import { uploadThread } from '@/lib/actions/threads.actions'
 import { useUploadThing } from '@/lib/functions/uploadthing'
@@ -16,11 +17,13 @@ type PropsTypes = {
   userId: string
   username: string
   userImageUrl: string
+  onboarded: boolean
 }
 
-const ModalCreateThread = ({children, userId, username, userImageUrl}: PropsTypes) => {
+const ModalCreateThread = ({children, userId, username, userImageUrl, onboarded}: PropsTypes) => {
 
   const { toast } = useToast()
+  const pathname = usePathname()
   const [file, setFile] = useState<File[]>([])
   const [open, setOpen] = useState<boolean>(false)
   const [isCommented, setIsCommented] = useState("everyone")
@@ -61,12 +64,8 @@ const ModalCreateThread = ({children, userId, username, userImageUrl}: PropsType
       imageUrl: string
     } | null
   }) => {
-    await uploadThread({
-      text: text,
-      userId: userId,
-      image: image,
-      isCommented: isCommented
-    }).then(() => {
+    await uploadThread({ text, userId, image, isCommented, path: pathname })
+    .then(() => {
       setIsLoading(false)
       reset()
       setPrevImage("")
@@ -113,9 +112,10 @@ const ModalCreateThread = ({children, userId, username, userImageUrl}: PropsType
     }
   }
 
+  
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={onboarded ? open : false} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           {children}
         </DialogTrigger>

@@ -11,9 +11,11 @@ export async function GET() {
     return NextResponse.json({
       message: "success",
       user: {
-        id: user._id,
-        username: user.username,
-        image: user.image.imageUrl
+        id: user?._id.toString() || userLoggedIn?.id,
+        name: user?.name || userLoggedIn?.firstName,
+        username: user?.username || userLoggedIn?.username,
+        image: user?.image.imageUrl || userLoggedIn?.imageUrl,
+        onboarded: user?.onboarded || false
       }
     })
   } catch (error) {

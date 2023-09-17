@@ -2,7 +2,7 @@
 interface ThreadTypes {
   _id: string 
   text: string | null 
-  userPost: UserPostTypes
+  userPost: UserTypes
   image?: {
     imageKey: string
     imageUrl: string
@@ -18,7 +18,7 @@ interface CommentsType {
 }
 type ThreadsTypes = ThreadTypes & CommentsType
 
-interface UserPostTypes {
+interface UserTypes {
   _id: string
   id: string
   name: string

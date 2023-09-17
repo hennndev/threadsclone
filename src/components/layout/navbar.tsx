@@ -7,34 +7,43 @@ import { FaThreads } from 'react-icons/fa6'
 import NavLinks from '@/components/shared/navLinks'
 import { RiSunLine, RiMoonLine } from 'react-icons/ri'
 import ProfileIcon from '@/components/shared/profileIcon'
+import { useUser } from '@/store/user'
+import { redirect } from 'next/navigation'
+import { fetchUser } from '@/lib/actions/user.actions'
 
 type UserTypes = {
   id: string
+  name: string
   username: string
   image: string
+  onboarded: boolean
 }
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [user, setUser] = useState<UserTypes | Record<string, string>>({})
+  // const user = useUser((state) => state.user)
   const handleTheme = () => theme === 'dark' ? setTheme('light') : setTheme('dark')
 
   useEffect(() => {
-    async function getCurrentUser() {
-      const res = await fetch(`${apiRoute}/api/users`)
+    async function getUser() {
+      const res = await fetch(`${apiRoute}/api/getuser`)
       const data = await res.json()
-      if(data.user) {
+      if(data) {
         setUser(data.user)
       }
     }
-   getCurrentUser()
+    getUser()
   }, [])
 
   useEffect(() => {
     setMounted(true)
   }, [])
   if (!mounted) return null
+  
+
+  
 
   return (
     <>
