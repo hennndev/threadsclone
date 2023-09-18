@@ -13,7 +13,7 @@ type PropsTypes = {
 
 const Thread = ({data, isLoggedIn}: PropsTypes) => {
   return (
-    <Link href={`/${data.userPost.username}/threads/${data._id}`} className="flex pb-4 border-b border-gray-200 dark:border-gray-700 mb-4 cursor-pointer">
+    <div className="flex pb-4 border-b border-gray-200 dark:border-gray-700 mb-4">
       <div className="relative w-[30px] h-[30px] rounded-full mr-4">
         <Image 
           fill
@@ -26,10 +26,14 @@ const Thread = ({data, isLoggedIn}: PropsTypes) => {
       <div className="flex flex-1 flex-col">
         <div className="flex-between">
           <HoverUser userData={data.userPost} isLoggedIn={isLoggedIn}>
-            <h2 className="text-gray-700 dark:text-gray-200 font-semibold hover:underline">{data.userPost.username}</h2>
+            <Link href={`/${data.userPost.username}`}>
+              <h2 className="text-gray-700 dark:text-gray-200 font-semibold text-sm hover:underline cursor-pointer">
+                {data.userPost.username}
+              </h2>
+            </Link>
           </HoverUser>
           <div className="flexx">
-            <p className="text-sm text-gray-500 mr-3 font-medium">{moment(data.createdAt).startOf('minutes').fromNow()}</p>
+            <p className="text-sm text-gray-500 mr-3">{moment(data.createdAt).startOf('minutes').fromNow()}</p>
             <Popover>
               <PopoverTrigger asChild>
                 <MoreHorizontal className="cursor-pointer w-5 h-5"/>
@@ -41,13 +45,13 @@ const Thread = ({data, isLoggedIn}: PropsTypes) => {
             </Popover>
           </div>
         </div>
-        <div className="mt-2">
-          <p className="leading-[1.5] dark:text-gray-200 mb-3">{data.text}</p>
+        <div className="mt-1">
+          <p className="leading-[1.5] dark:text-gray-200 text-sm">{data.text}</p>
           {data.image?.imageUrl ? (
-              <Image width={0} height={0} sizes="auto" src={data.image.imageUrl} alt={"thread-img"} className="w-auto h-auto object-cover"/>
+              <Image width={0} height={0} sizes="auto" src={data.image.imageUrl} alt={"thread-img"} className="w-auto h-auto object-cover mt-2"/>
           ) : null}
         </div>
-        <div className="flexx space-x-3 mt-3">
+        <div className="flexx space-x-3 mt-2">
           <Heart className="text-gray-600 dark:text-gray-300 cursor-pointer w-5"/>
           <MessageSquare className="text-gray-600 dark:text-gray-300 cursor-pointer w-5"/>
           <Repeat2 className="text-gray-600 dark:text-gray-300 cursor-pointer w-5.5"/>
@@ -63,7 +67,7 @@ const Thread = ({data, isLoggedIn}: PropsTypes) => {
           </>
         ) : null}
       </div>
-    </Link>
+    </div>
   )
 }
 

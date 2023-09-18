@@ -38,7 +38,7 @@ const CreateThread = ({user}: UserTypes) => {
             className="w-full h-full object-cover rounded-full"/>
         </div>
         <div className="flexx flex-1">
-          <Input value="" placeholder="Mulai ulas .." className="border-none flex-1 outline-none focus:ring-0 bg-transparent font-medium text-gray-500 placeholder:text-gray-500 text-base"/>
+          <Input readOnly placeholder="Mulai ulas .." className="border-none flex-1 outline-none focus:ring-0 bg-transparent font-medium text-gray-500 placeholder:text-gray-500 text-base"/>
           <button className="border border-gray-300 text-gray-500 dark:border-[#2b2b2b] px-3 py-2 rounded-lg bg-transparent text-sm cursor-not-allowed">Kirim</button>
         </div>
       </div>

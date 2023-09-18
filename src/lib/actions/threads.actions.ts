@@ -34,6 +34,35 @@ export async function getThreads(): Promise<Array<any>> {
   }
 }
 
+
+export async function getThread(threadId: string) {
+  await connectDB()
+  
+  try {
+    const thread = await Threads.findOne({_id: threadId}).select("-__v")
+      .populate({
+        path: "userPost",
+        model: Users,
+        select: "-__v -id -createdAt -onboarded -threads -communities"
+      })
+      .populate({
+        path: "comments",
+        model: Threads,
+        populate: [
+          {
+            path: "userPost",
+            model: Users,
+            select: "-__v -id -createdAt -onboarded -threads -communities"
+          }
+        ]
+      })
+    
+      return thread
+  } catch (error: any) {
+    throw new Error(`Failed get thread: ${error.message}`)   
+  }
+}
+
 export async function uploadThread({text, userId, image = null, isCommented, path}: {
   text: string | null
   userId: string
