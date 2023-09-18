@@ -2,7 +2,7 @@ import React from 'react'
 import { redirect } from 'next/navigation'
 import { currentUser } from '@clerk/nextjs'
 import { checkUserExist } from '@/lib/actions/user.actions'
-import AccountProfile from '@/components/forms/accountProfile'
+import ProfileForm from '@/components/forms/profileForm'
 
 interface UserInfoTypes {
   id: string
@@ -44,7 +44,7 @@ const Onboarding = async () => {
       <p className="mt-3 text-gray-100">Complete your profile to use the threads</p>
 
       <section className="mt-5 p-7 border border-[#2b2b2b] rounded-md">
-        <AccountProfile
+        <ProfileForm
           userData={userData}
           btnTitle="Continue"/>
       </section>

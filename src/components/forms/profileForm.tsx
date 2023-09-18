@@ -29,7 +29,7 @@ interface PropsTypes {
   btnTitle: string
 }
 
-const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
+const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
 
   const router = useRouter()
   const pathname = usePathname()
@@ -180,4 +180,4 @@ const AccountProfile = ({userData, btnTitle}: PropsTypes) => {
   )
 }
 
-export default AccountProfile
+export default ProfileForm
