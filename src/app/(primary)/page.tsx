@@ -3,25 +3,16 @@ import Threads from '@/components/threads/threads'
 import { fetchUser } from '@/lib/actions/user.actions'
 import { getThreads } from '@/lib/actions/threads.actions'
 import CreateThread from '@/components/threads/createThread'
-import { apiRoute } from '@/config/config'
 
 export const metadata = {
   title: "Beranda"
 }
 
-type UserInfoTypes = {
-  id: string
-  name: string
-  username: string
-  image: string
-  onboarded: boolean
-}
-
 const Home = async () => {
-  const threads: ThreadsTypes[] = await getThreads()
   const userLoggedIn = await currentUser()
+  const threads: ThreadsTypes[] = await getThreads()
   if(!userLoggedIn) return null
-  const user = await fetchUser(userLoggedIn.id)
+  const user: UserInfoTypes | null = await fetchUser(userLoggedIn.id)
   
   let userData = {
     id: user?.id || userLoggedIn.id,
@@ -35,7 +26,16 @@ const Home = async () => {
     <section className="w-full flex-center p-5">
       <div className="w-[550px]">
         <CreateThread user={userData as UserInfoTypes}/>
-        <Threads isLoggedIn={userLoggedIn.id} data={threads}/>
+        {threads.length > 0 ? (
+          <Threads 
+            data={threads} //threads data
+            userLoggedInId={userLoggedIn.id.toString()} //id user login
+            currentUserData={userData as UserInfoTypes}/> //user data login dari database
+        ) : (
+          <div className="flex-center">
+            <p className="text-sm">Belum ada thread yang dibuat</p>
+          </div>
+        )}
       </div>
     </section>
   )

@@ -13,6 +13,7 @@
     "@clerk/themes": "^1.7.5",
     "@clerk/types": "^3.51.0",
     "@hookform/resolvers": "^3.3.1",
+    "@radix-ui/react-alert-dialog": "^1.0.4",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-hover-card": "^1.0.6",

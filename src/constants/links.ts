@@ -1,4 +1,4 @@
-import { Heart, Home, PenSquare, Search, User2, Users } from 'lucide-react'
+import { Bell, Home, PenSquare, Search, User2, Users } from 'lucide-react'
 
 export const links = [
   {
@@ -18,7 +18,7 @@ export const links = [
   {
     name: "Aktivitas",
     path: "activity",
-    Icon: Heart
+    Icon: Bell
   },
   {
     name: "Komunitas",

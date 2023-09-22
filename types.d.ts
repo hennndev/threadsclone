@@ -2,7 +2,7 @@
 interface ThreadTypes {
   _id: string 
   text: string | null 
-  userPost: UserTypes
+  userPost: any
   image?: {
     imageKey: string
     imageUrl: string
@@ -14,9 +14,16 @@ interface ThreadTypes {
   createdAt: Date 
 }
 interface CommentsType {
+  
+}
+type ThreadsTypes = ThreadTypes & {
   comments: ThreadTypes[]
 }
-type ThreadsTypes = ThreadTypes & CommentsType
+
+
+
+
+
 
 interface UserTypes {
   _id: string
@@ -32,4 +39,17 @@ interface UserTypes {
     imageKey: string
     imageUrl: string
   }
+}
+
+
+interface UserData {
+
+}
+
+interface UserInfoTypes {
+  id: string
+  name: string
+  username: string
+  image: string
+  onboarded: boolean
 }

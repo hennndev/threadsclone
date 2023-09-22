@@ -2,26 +2,17 @@
 import React from 'react'
 import Link from 'next/link'
 import { links } from '@/constants/links'
-import { usePathname, useRouter } from 'next/navigation'
+import { Badge } from '@/components/ui/badge'
 import { ToastAction } from '@/components/ui/toast'
 import { useToast } from '@/components/ui/use-toast'
+import { usePathname, useRouter } from 'next/navigation'
 import ModalCreateThread from '@/components/shared/modalCreateThread'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-type PropsTypes = {
-  user: {
-    id: string
-    name: string
-    username: string
-    image: string
-    onboarded: boolean
-  }
-}
-
-const NavLinks = ({user}: PropsTypes) => {
-  const pathname = usePathname()
-  const { toast } = useToast()
+const NavLinks = ({user}: {user: UserInfoTypes}) => {
   const router = useRouter()
+  const { toast } = useToast()
+  const pathname = usePathname()
   const path = pathname.split("/")
   const showMsgToast = () => {
     toast({
@@ -36,7 +27,7 @@ const NavLinks = ({user}: PropsTypes) => {
         <TooltipProvider key={obj.name}>
           <Tooltip>
             {obj.name === "Buat thread" ? (
-              <ModalCreateThread userId={user.id} username={user.username} userImageUrl={user.image} onboarded={user.onboarded}>
+              <ModalCreateThread user={user}>
                 <TooltipTrigger asChild>
                   <div className="nav-links lg:mr-10 cursor-pointer" onClick={() => !user.onboarded && showMsgToast()}>
                     <Icon className="nav-links-icon"/>
@@ -44,8 +35,26 @@ const NavLinks = ({user}: PropsTypes) => {
                 </TooltipTrigger>
               </ModalCreateThread>
             ) : (
+              obj.path === "profile" && !user.onboarded ? (
+                <TooltipTrigger asChild>
+                  <div onClick={showMsgToast} className={`nav-links relative lg:mr-10 
+                    ${obj.path === "profile" ? 
+                      path[1] === user.username ? "bg-gray-100 dark:bg-[#222]" : "" 
+                      : 
+                      path[1] === obj.path ?  "bg-gray-100 dark:bg-[#222]" : ""
+                    }`}>
+                    <Icon className={`nav-links-icon 
+                      ${obj.path === "profile" ? 
+                        path[1] === user.username ? "text-gray-900 dark:text-gray-100" : "" 
+                        : 
+                        path[1] === obj.path ?  "text-gray-900 dark:text-gray-100" : ""
+                      }`}/>
+                    <Badge variant="destructive" className="animate-pulse z-10 absolute w-4 h-4 p-0 flex-center top-1 right-2 text-xs">!</Badge>
+                  </div> 
+                </TooltipTrigger>
+              ) : (
               <TooltipTrigger asChild>
-                <Link className={`nav-links lg:mr-10 
+                <Link className={`nav-links relative lg:mr-10 
                   ${obj.path === "profile" ? 
                     path[1] === user.username ? "bg-gray-100 dark:bg-[#222]" : "" 
                     : 
@@ -58,8 +67,12 @@ const NavLinks = ({user}: PropsTypes) => {
                       : 
                       path[1] === obj.path ?  "text-gray-900 dark:text-gray-100" : ""
                     }`}/>
+                  {obj.name === "Aktivitas" ? (
+                    <Badge variant="destructive" className="z-10 absolute w-4 h-4 p-0 flex-center top-1 right-2 text-xs">1</Badge>
+                  ) : null}
                 </Link> 
               </TooltipTrigger>
+              )
             )}
             <TooltipContent>
               <p>{obj.name}</p>

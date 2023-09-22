@@ -17,10 +17,10 @@ export async function GET() {
         image: user?.image.imageUrl || userLoggedIn?.imageUrl,
         onboarded: user?.onboarded || false
       }
-    })
+    }, {status: 200})
   } catch (error) {
     return NextResponse.json({
       error: "error",
-    })
+    }, {status: 400})
   }
 }

@@ -1,50 +1,23 @@
-"use client"
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import { useTheme } from 'next-themes'
-import { apiRoute } from '@/config/config'
+import DarkMode from '../shared/darkMode'
 import { FaThreads } from 'react-icons/fa6'
+import { currentUser } from '@clerk/nextjs'
 import NavLinks from '@/components/shared/navLinks'
-import { RiSunLine, RiMoonLine } from 'react-icons/ri'
-import ProfileIcon from '@/components/shared/profileIcon'
-import { useUser } from '@/store/user'
-import { redirect } from 'next/navigation'
 import { fetchUser } from '@/lib/actions/user.actions'
+import ProfileIcon from '@/components/shared/profileIcon'
 
-type UserTypes = {
-  id: string
-  name: string
-  username: string
-  image: string
-  onboarded: boolean
-}
-
-const Navbar = () => {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  const [user, setUser] = useState<UserTypes | Record<string, string>>({})
-  // const user = useUser((state) => state.user)
-  const handleTheme = () => theme === 'dark' ? setTheme('light') : setTheme('dark')
-
-  useEffect(() => {
-    async function getUser() {
-      const res = await fetch(`${apiRoute}/api/getuser`)
-      const data = await res.json()
-      if(data) {
-        setUser(data.user)
-      }
-    }
-    getUser()
-  }, [])
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-  if (!mounted) return null
-  
-
-  
-
+const Navbar = async () => {
+  const userLoggedIn = await currentUser()
+  if(!userLoggedIn) return null
+  const user: UserInfoTypes | null = await fetchUser(userLoggedIn.id)
+  let userData = {
+    id: user?.id || userLoggedIn.id,
+    name: user?.name || userLoggedIn.firstName,
+    username: user?.username || userLoggedIn.username,
+    image: user?.image || userLoggedIn.imageUrl,
+    onboarded: user?.onboarded || false
+  }
   return (
     <>
       <header className="container sticky top-0 p-4 bg-white z-10 dark:bg-[#101010]">
@@ -53,21 +26,16 @@ const Navbar = () => {
             <FaThreads className="text-[26px] md:text-[32px] text-gray-700 dark:text-gray-200"/>
           </Link>
           <div className="hidden lg:inline">
-            <NavLinks user={user as UserTypes}/>
+            <NavLinks user={userData as UserInfoTypes}/>
           </div>
           <div className="flexx space-x-4">
-            {theme === "light" ? (
-              <RiMoonLine className="text-[26px] md:text-[30px] text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-700 dark:hover:text-primary-dark" onClick={handleTheme}/>
-            ) : (
-              <RiSunLine className="text-[26px] md:text-[30px] text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-700 dark:hover:text-primary-dark" onClick={handleTheme}/>
-            )}
-            <ProfileIcon user={user as UserTypes} theme={theme as string}/>
+            <DarkMode/>
+            <ProfileIcon user={userData as UserInfoTypes}/>
           </div>
         </div>
       </header>
-      {/* bottom bar */}
       <div className="fixed bg-white z-10 dark:bg-[#101010] lg:hidden bottom-0 w-full p-3">
-        <NavLinks user={user as UserTypes}/>
+        <NavLinks user={userData as UserInfoTypes}/>
       </div>
     </>
   )

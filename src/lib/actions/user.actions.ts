@@ -25,15 +25,7 @@ export async function getUsersUsername() {
 export async function getUserData(username: string) {
   await connectDB()
   try {
-    const user = await Users.findOne({username: username}).populate({
-      path: "threads", 
-      model: Threads,
-      options: {sort: {createdAt: "desc"}},
-      populate: {
-        path: "userPost",
-        model: Users
-      }
-    })
+    const user = await Users.findOne({username: username}).select("-createdAt -__v -threads")
     return user
   } catch (error: any) {
     throw new Error(`Failed get user: ${error.message}`)
@@ -74,7 +66,7 @@ export async function checkUserExist(id: string): Promise<{
 
 
 
-export async function fetchUser(id: string) {
+export async function fetchUser(id: string): Promise<UserInfoTypes | null> {
   await connectDB()
   try {
     const user = await Users.findOne({id: id})
@@ -121,5 +113,18 @@ export async function upsertUser({id, name, username, image, bio, path, oldImage
     
   } catch (error: any) {
     throw new Error(`Failed upsert user: ${error.message}`) 
+  }
+}
+
+
+export async function followUser(id: string, currentUserId: string, path: string) {
+  await connectDB()
+  try {
+    await Users.updateOne({_id: id}, {
+      $push: {followers: currentUserId}
+    }, {upsert: true})
+    revalidatePath(path)
+  } catch (error: any) {
+    throw new Error(`Failed follow this user: ${error.message}`) 
   }
 }

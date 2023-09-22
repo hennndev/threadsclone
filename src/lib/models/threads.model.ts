@@ -39,8 +39,8 @@ const threadSchema = new Schema({
   },
   isCommented: {
     type: String,
-    enum: ["everyone", "followers"],
-    default: "everyone"
+    enum: ["allowed", "not-allowed"],
+    default: "allowed"
   },
   comments: [
     {

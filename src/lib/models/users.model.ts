@@ -10,10 +10,10 @@ const userSchema = new Schema({
   name: {
     type: String,
     required: true,
-    unique: true
   },
   username: {
     type: String,
+    unique: true,
     required: true
   },
   image: {
@@ -41,6 +41,12 @@ const userSchema = new Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Community"
+    }
+  ],
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users"
     }
   ],
   createdAt: {

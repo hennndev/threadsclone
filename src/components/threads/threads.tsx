@@ -1,19 +1,21 @@
 import React from 'react'
 import Thread from './thread'
-import Link from 'next/link'
 
 type PropsTypes = {
   data: ThreadsTypes[]
-  isLoggedIn: string
+  userLoggedInId: string
+  currentUserData: UserInfoTypes
 }
 
-const Threads = ({data, isLoggedIn}: PropsTypes) => {
+const Threads = ({userLoggedInId, data, currentUserData}: PropsTypes) => {
   return (
     <section className="flex flex-col">
       {data.map((data) => (
-        <Link href={`/${data.userPost.username}/threads/${data._id}`} key={data._id} passHref={true}>
-          <Thread isLoggedIn={isLoggedIn === data.userPost.id} key={data._id} data={data}/>
-        </Link>
+        <Thread 
+          key={data._id.toString()} 
+          data={data} //thread data from mapping
+          currentUserData={currentUserData} //user data login dari database
+          isCurrentUser={data.userPost.id === userLoggedInId}/> //untuk mengecek apakah thread dibuat oleh user login saat ini
       ))}
     </section>
   )

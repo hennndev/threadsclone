@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { currentUser } from '@clerk/nextjs'
 import { checkUserExist } from '@/lib/actions/user.actions'
 import ProfileForm from '@/components/forms/profileForm'
+import { revalidatePath } from 'next/cache'
 
 interface UserInfoTypes {
   id: string
@@ -35,6 +36,7 @@ const Onboarding = async () => {
     onboarded: userDB?.onboarded || false
   }
   if(userDB) {
+    revalidatePath("/")
     redirect("/")
   }
 
@@ -42,7 +44,6 @@ const Onboarding = async () => {
     <main className="flex flex-col max-w-3xl mx-auto px-5 py-10">
       <h1 className="text-gray-100 text-3xl font-bold">Onboarding</h1>
       <p className="mt-3 text-gray-100">Complete your profile to use the threads</p>
-
       <section className="mt-5 p-7 border border-[#2b2b2b] rounded-md">
         <ProfileForm
           userData={userData}

@@ -3,28 +3,35 @@ import { connectDB } from "../mongoose"
 import { Users } from "../models/users.model"
 import { Threads } from "../models/threads.model"
 import { revalidatePath } from "next/cache"
+import { utapi } from 'uploadthing/server'
 
 
-export async function getThreads(): Promise<Array<any>> {
+export async function getThreads(byUser: null | string = null): Promise<Array<any>> {
   await connectDB()
   // limit
   // skip
+  let queries: Record<string, string | Record<string, boolean>> = {
+    parentId: {$exists: false}
+  }
+  if(byUser) {
+    queries.userPost = byUser
+  }
   try {
-    const threads = await Threads.find({}).sort({createdAt: "desc"}).select("-__v")
-      .populate({ path: "userPost", model: Users, select: "-__v -id -createdAt -onboarded -threads -communities"})
-      .populate({path: "likes", model: Users, select: "-__v -id -createdAt -onboarded -threads -communities"})
+    const threads = await Threads.find(queries).sort({createdAt: "desc"}).select("-__v")
+      .populate({ path: "userPost", model: Users, select: "-__v -createdAt -onboarded -threads -communities"})
+      .populate({path: "likes", model: Users, select: "-__v -createdAt -onboarded -threads -communities"})
       .populate({
         path: "comments",
         populate: [
           {
             path: "userPost",
             model: Users,
-            select: "-__v -id -createdAt -onboarded -threads -communities"
+            select: "-__v -createdAt -onboarded -threads -communities"
           },
           {
             path: "likes",
             model: Users,
-            select: "-__v -id -createdAt -onboarded -threads -communities"
+            select: "-__v -createdAt -onboarded -threads -communities"
           },
         ]
       })
@@ -35,7 +42,7 @@ export async function getThreads(): Promise<Array<any>> {
 }
 
 
-export async function getThread(threadId: string) {
+export async function getThread(threadId: string): Promise<any> {
   await connectDB()
   
   try {
@@ -43,16 +50,17 @@ export async function getThread(threadId: string) {
       .populate({
         path: "userPost",
         model: Users,
-        select: "-__v -id -createdAt -onboarded -threads -communities"
+        select: "-__v -createdAt -onboarded -threads -communities"
       })
       .populate({
         path: "comments",
         model: Threads,
+        options: {sort: {createdAt: "desc"}},
         populate: [
           {
             path: "userPost",
             model: Users,
-            select: "-__v -id -createdAt -onboarded -threads -communities"
+            select: "-__v -createdAt -onboarded -threads -communities"
           }
         ]
       })
@@ -63,27 +71,31 @@ export async function getThread(threadId: string) {
   }
 }
 
-export async function uploadThread({text, userId, image = null, isCommented, path}: {
+export async function uploadThread({userId, path, ...dataParam}: {
   text: string | null
   userId: string
   image: {
-    imageKey: string
+    imageKey?: string
     imageUrl: string
   } | null,
   isCommented: string
+  parentId?: string
   path: string
 }): Promise<void> {
   await connectDB()
   try {
     const newThread = await Threads.create({
-      text,
       userPost: userId,
-      image,
-      isCommented
+      ...dataParam
     })
     await Users.updateOne({_id: userId}, {
       $push: {threads: newThread._id}
     })
+    if(dataParam.parentId) {
+      await Threads.updateOne({_id: dataParam.parentId}, {
+        $push: {comments: newThread._id}
+      })
+    }
     if(path !== "/" && path !== '/[user]') {
       revalidatePath("/")
     } else {
@@ -96,22 +108,73 @@ export async function uploadThread({text, userId, image = null, isCommented, pat
 }
 
 
-export async function updateThread({text, threadId}: {text: string, threadId: string}) {
+export async function editThread({threadId, path, oldImageKey, ...dataParam}: {
+  text: string | null
+  threadId: string
+  image: {
+    imageKey?: string
+    imageUrl: string
+  } | null,
+  isCommented: string
+  parentId?: string
+  oldImageKey: string | null
+  path: string
+}): Promise<void> {
   await connectDB()
-  try { 
+  try {
     await Threads.updateOne({_id: threadId}, {
-      text: text
+      ...dataParam
     })
+    if(oldImageKey) {
+      await utapi.deleteFiles(oldImageKey)
+    }
+    if(path !== "/" && path !== '/[user]') {
+      revalidatePath("/")
+    } else {
+      revalidatePath(path)
+    }
+
   } catch (error: any) {
-    throw new Error(`Failed update thread: ${error.message}`)
+    throw new Error(`Failed upload new thread: ${error.message}`)
   }
 }
 
-export async function deleteThread({userId}: {userId: string}): Promise<void> {
+
+
+
+export async function deleteThread(threadId: string, userId: string, imageKey: string | null, path: string): Promise<void> {
   await connectDB()
   try {
-    await Threads.findByIdAndDelete(userId)
+    await Threads.findByIdAndDelete(threadId)
+    await Threads.deleteMany({parentId: threadId})
+    await Users.updateOne({_id: userId}, {
+      $pull: {threads: threadId}
+    })
+    if(imageKey) {
+      await utapi.deleteFiles(imageKey)
+    }
+    revalidatePath(path)
   } catch (error: any) {
     throw new Error(`Failed delete thread: ${error.message}`)
+  }
+}
+
+
+export async function likeThread(threadId: string, currentUserId: string, likeStatus: string, path: string) {
+  await connectDB()
+  try {
+    if(likeStatus === "like") {
+      await Threads.updateOne({_id: threadId, likes: { $ne: currentUserId }}, {
+        $push: {likes: currentUserId}
+      }, {upsert: true})
+    }
+    if(likeStatus === "dislike") {
+      await Threads.updateOne({_id: threadId}, {
+        $pull: {likes: currentUserId}
+      }, {upsert: true})
+    } 
+    revalidatePath(path)
+  } catch (error: any) {
+    throw new Error(`Failed follow this user: ${error.message}`) 
   }
 }
