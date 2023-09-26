@@ -6,9 +6,9 @@ import { likeThread } from '@/lib/actions/threads.actions'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 
 type PropsTypes = {
+  isLike: boolean
   threadId: string
   currentUserDataId: string
-  isLike: boolean
 }
 
 const LikeThread = ({threadId, isLike, currentUserDataId}: PropsTypes) => {

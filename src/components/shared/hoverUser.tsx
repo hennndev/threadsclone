@@ -8,40 +8,41 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
   
 type PropsTypes = {
   children: React.ReactNode
-  threadUserData: any //sementara pake any
+  userData: UserData 
   currentUserData: UserInfoTypes
   isCurrentUser: boolean
 }
 
-const HoverUser = ({children, threadUserData, currentUserData, isCurrentUser}: PropsTypes) => {
-  const isFollowed = Boolean(threadUserData?.followers.find((_id: string) => _id.toString() === currentUserData.id))
+const HoverUser = ({children, userData, currentUserData, isCurrentUser}: PropsTypes) => {
+  const isFollowed = Boolean(userData?.followers.find((_id: string) => _id.toString() === currentUserData.id))
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
         {children}
       </HoverCardTrigger>
-      <HoverCardContent align="start" className="w-80">
+      <HoverCardContent align="start" className="w-64 -ml-5 lg:md:w-80">
         <div className="flex space-x-4">
           <Avatar>
-            <AvatarImage src={threadUserData?.image.imageUrl} />
-            <AvatarFallback>{threadUserData?.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarImage src={userData?.image.imageUrl} />
+            <AvatarFallback>{userData?.username.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="flex">
-              <h1 className="text-lg font-semibold mr-2">{threadUserData?.name}</h1>
+              <h1 className="text-lg font-semibold mr-2">{userData?.name}</h1>
               <BadgeCheck className="w-5 text-blue-600"/>
             </div>
-            <h4 className="text-sm mb-1">@{threadUserData?.username}</h4>
-            <p className="text-sm mb-1">{threadUserData?.bio}</p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mb-2">{threadUserData?.followers.length} pengikut</p>
+            <h4 className="text-sm mb-1">@{userData?.username}</h4>
+            <p className="text-sm mb-1">{userData?.bio}</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mb-2">{userData?.followers.length} pengikut</p>
             <div className="flex">
               {!isCurrentUser ? (
                 <FollowButton 
-                  isFollowed={isFollowed} //jika user yg login saat ini sudah follow user post thread 
+                  classes="w-full flex-1"
+                  isFollowed={isFollowed} 
                   currentUserData={currentUserData} 
-                  threadUserDataId={threadUserData?._id.toString()}/> //_id dari user post thread
+                  userDataId={userData?._id.toString()}/> 
               ) : null}
-              <Link href={`/${threadUserData?.username}`} className="flex-1 ml-3">
+              <Link href={`/${userData?.username}`} className="flex-1 ml-3">
                 <Button size="sm" variant="outline" className="w-full text-sm font-semibold">
                   {isCurrentUser ? "Profilku" : "Visit"}
                 </Button>

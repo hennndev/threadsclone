@@ -15,7 +15,8 @@ export async function GET() {
         name: user?.name || userLoggedIn?.firstName,
         username: user?.username || userLoggedIn?.username,
         image: user?.image.imageUrl || userLoggedIn?.imageUrl,
-        onboarded: user?.onboarded || false
+        onboarded: user?.onboarded || false,
+        activities: user?.activities.filter((activity: UserActivitiesTypes) => !activity.isRead).length || 0
       }
     }, {status: 200})
   } catch (error) {

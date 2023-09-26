@@ -30,8 +30,8 @@ const ThreadDetail = async ({params: {threadId}}: {params: {threadId: string}}) 
     <section className="w-full flex-center p-5">
       <div className="w-[550px]">
         <Thread 
-          data={thread} //thread data from mapping
-          currentUserData={userData as UserInfoTypes} //user data login dari database
+          data={thread} 
+          currentUserData={userData as UserInfoTypes} 
           isCurrentUser={thread.userPost.id === userLoggedIn.id}/> 
         <Threads 
             data={thread.comments} 

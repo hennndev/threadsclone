@@ -9,16 +9,18 @@ import { followUser } from '@/lib/actions/user.actions'
 
 type PropsTypes = {
   isFollowed: boolean
-  threadUserDataId: string
+  classes?: string
+  userDataId: string
   currentUserData: UserInfoTypes
 }
 
-const FollowButton = ({isFollowed, threadUserDataId, currentUserData}: PropsTypes) => {
-  const pathname = usePathname()
+const FollowButton = ({isFollowed, userDataId, currentUserData, classes = ""}: PropsTypes) => {
   const router = useRouter()
   const { toast } = useToast()
-
-  const handleFollow = async () => {
+  const pathname = usePathname()
+  const handleFollow = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
     if(!currentUserData.onboarded) {
       toast({
         title: "Belum dapat akses",
@@ -27,17 +29,16 @@ const FollowButton = ({isFollowed, threadUserDataId, currentUserData}: PropsType
       })
     } else {
       try {
-        await followUser(threadUserDataId, currentUserData.id, pathname).then(() => {
+        await followUser(userDataId, currentUserData.id, isFollowed ? "unfollow" : "follow", pathname).then(() => {
           toast({
-            duration: 3000,
+            duration: 5000,
             title: "Berhasil!",
-            description: "Kamu berhasil follow user ini",
+            description: isFollowed ? "Kamu unfollow user ini" : "Kamu follow user ini", 
           })
         })
       } catch (error) {
         toast({
-          variant: "destructive",
-          duration: 3000,
+          duration: 5000,
           title: "Gagal!",
           description: "Kamu sudah follow user ini sebelumnya",
         })
@@ -45,8 +46,8 @@ const FollowButton = ({isFollowed, threadUserDataId, currentUserData}: PropsType
     }
   }
   return (
-    <Button disabled={isFollowed} size="sm" className={`w-full flex-1 text-sm font-semibold`} onClick={() => !isFollowed && handleFollow()}>
-      {isFollowed ? "Mengikuti" : "Ikuti"}
+    <Button size="sm" className={`text-sm font-semibold ${classes}`} onClick={(e) => handleFollow(e)}>
+      {isFollowed ? "Unfollow" : "Follow"}
     </Button>
   )
 }

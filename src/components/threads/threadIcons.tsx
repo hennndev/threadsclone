@@ -1,21 +1,20 @@
 import React from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
 import moment from 'moment'
-import HoverUser from '@/components/threads/hoverUser' //DONE ✅
-import LikeThread from '@/components/threads/likeThread' //DONE ✅
+import Link from 'next/link'
+import Image from 'next/image'
+import HoverUser from '@/components/shared/hoverUser' 
+import LikeThread from '@/components/threads/likeThread' 
 import { MessageSquare, Repeat2, Send } from 'lucide-react'
-import CommentThread from '@/components/threads/commentThread' //DONEE ✅
+import CommentThread from '@/components/threads/commentThread' 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 
 type PropsTypes = {
-  data: any
+  data: ThreadsTypes
   isCurrentUser: boolean
   currentUserData: UserInfoTypes
 }
 
 const ThreadIcons = ({data, isCurrentUser, currentUserData}: PropsTypes) => {
-  console.log(data.likes)
   return (
     <div className="flexx space-x-[2px] mt-2">
       <LikeThread
@@ -28,14 +27,14 @@ const ThreadIcons = ({data, isCurrentUser, currentUserData}: PropsTypes) => {
             <MessageSquare className="text-gray-800 dark:text-gray-300 cursor-pointer w-5"/>
           </div>
         </DialogTrigger>
-        <DialogContent className="w-[330px] xs:w-[400px] sm:w-[500px] md:w-[600px] max-h-[600px] overflow-y-auto">
+        <DialogContent className="w-[330px] xs:w-[400px] sm:w-[500px] md:w-[600px] min-h-[400px] max-h-[600px] overflow-y-auto">
           <div className="flex mb-4">
             <div className="relative w-[30px] h-[30px] rounded-full mr-4">
               <Image 
                 fill
                 sizes="auto" 
                 src={data.userPost.image.imageUrl} 
-                alt="sample" 
+                alt={data.userPost.username} 
                 quality={75}
                 className="w-full h-full object-cover rounded-full"/>
             </div>
@@ -43,7 +42,7 @@ const ThreadIcons = ({data, isCurrentUser, currentUserData}: PropsTypes) => {
               <div className="flex-between">
                 <HoverUser 
                   currentUserData={currentUserData}
-                  threadUserData={data.userPost} 
+                  userData={data.userPost} 
                   isCurrentUser={isCurrentUser}>
                   <Link href={`/${data.userPost.username}`}>
                     <h2 className="text-gray-700 dark:text-gray-200 font-semibold text-sm hover:underline cursor-pointer">

@@ -1,4 +1,3 @@
-
 interface ThreadTypes {
   _id: string 
   text: string | null 
@@ -13,17 +12,8 @@ interface ThreadTypes {
   parentId?: string 
   createdAt: Date 
 }
-interface CommentsType {
-  
-}
-type ThreadsTypes = ThreadTypes & {
-  comments: ThreadTypes[]
-}
 
-
-
-
-
+type ThreadsTypes = ThreadTypes & {comments: ThreadTypes[] | string[]}
 
 interface UserTypes {
   _id: string
@@ -43,7 +33,20 @@ interface UserTypes {
 
 
 interface UserData {
-
+  _id: string
+  id: string
+  name: string
+  username: string
+  image: {
+    imageKey?: string
+    imageUrl: string
+  }
+  bio: string
+  followers?: any,
+  onboarded?: boolean
+  threads?: any
+  communities?: any
+  activities?: any
 }
 
 interface UserInfoTypes {
@@ -52,4 +55,14 @@ interface UserInfoTypes {
   username: string
   image: string
   onboarded: boolean
+  activities?: number | UserActivitiesTypes[]
+}
+
+interface UserActivitiesTypes {
+  user: any
+  routeLink?: string
+  text: string
+  isGreeting?: boolean
+  isRead: boolean
+  createdAt: Date 
 }

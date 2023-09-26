@@ -48,11 +48,6 @@ const EditThread = ({dataEdit, currentUserData: {id, username, image, onboarded}
   })
   const { register, setValue, watch, reset, handleSubmit } = form
 
-
-
-
-
-
   const uploadAction = async ({text, image, oldImageKey = null}: {
     text: string | null, 
     image: {
@@ -132,9 +127,6 @@ const EditThread = ({dataEdit, currentUserData: {id, username, image, onboarded}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataEdit])
   
-
-  
-
   return (
     <Dialog open={onboarded ? open : false} onOpenChange={setOpen}>
       <DialogTrigger asChild>

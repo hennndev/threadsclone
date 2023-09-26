@@ -1,23 +1,28 @@
-import React from 'react'
+"use client"
+import React, { useEffect } from 'react'
+import useSWR from 'swr'
 import Link from 'next/link'
-import DarkMode from '../shared/darkMode'
+import { useStore } from '@/store/store'
 import { FaThreads } from 'react-icons/fa6'
-import { currentUser } from '@clerk/nextjs'
 import NavLinks from '@/components/shared/navLinks'
-import { fetchUser } from '@/lib/actions/user.actions'
+import DarkMode from '@/components/shared/darkMode'
 import ProfileIcon from '@/components/shared/profileIcon'
 
-const Navbar = async () => {
-  const userLoggedIn = await currentUser()
-  if(!userLoggedIn) return null
-  const user: UserInfoTypes | null = await fetchUser(userLoggedIn.id)
-  let userData = {
-    id: user?.id || userLoggedIn.id,
-    name: user?.name || userLoggedIn.firstName,
-    username: user?.username || userLoggedIn.username,
-    image: user?.image || userLoggedIn.imageUrl,
-    onboarded: user?.onboarded || false
-  }
+const fetcher = (url: string) => fetch(url).then(res => res.json())
+
+const Navbar = () => {
+  const { data, isValidating } = useSWR('/api/getuser', fetcher)  
+  const addStatusNotif = useStore((state) => state.addStatusNotif)
+
+  useEffect(() => {
+    if(data && data.user.onboarded) {
+      addStatusNotif(data.user.activities)
+    } else {
+      addStatusNotif(0)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, isValidating])
+  
   return (
     <>
       <header className="container sticky top-0 p-4 bg-white z-10 dark:bg-[#101010]">
@@ -26,19 +31,18 @@ const Navbar = async () => {
             <FaThreads className="text-[26px] md:text-[32px] text-gray-700 dark:text-gray-200"/>
           </Link>
           <div className="hidden lg:inline">
-            <NavLinks user={userData as UserInfoTypes}/>
+            {data ? <NavLinks currentUserData={data.user as UserInfoTypes}/> : null}
           </div>
           <div className="flexx space-x-4">
             <DarkMode/>
-            <ProfileIcon user={userData as UserInfoTypes}/>
+            {data ? <ProfileIcon currentUserData={data.user as UserInfoTypes}/> : null}
           </div>
         </div>
       </header>
       <div className="fixed bg-white z-10 dark:bg-[#101010] lg:hidden bottom-0 w-full p-3">
-        <NavLinks user={userData as UserInfoTypes}/>
+        {data ? <NavLinks currentUserData={data.user as UserInfoTypes}/> : null}
       </div>
     </>
   )
 }
-
 export default Navbar

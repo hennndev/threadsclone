@@ -49,6 +49,33 @@ const userSchema = new Schema({
       ref: "Users"
     }
   ],
+  activities: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users"
+      },
+      routeLink: {
+        type: String,
+      },
+      text: {
+        type: String,
+        required: true
+      },
+      isGreeting: {
+        type: Boolean,
+        default: false
+      },
+      isRead: {
+        type: Boolean,
+        default: false,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now

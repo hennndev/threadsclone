@@ -83,7 +83,6 @@ const CommentThread = ({parentId, currentUserData: {id, username, image}}: Props
     } catch (error) {
       setIsLoading(false)
       toast({
-        variant: "destructive",
         duration: 3000,
         title: "Gagal!",
         description: "Thread gagal dibuat",
@@ -98,9 +97,18 @@ const CommentThread = ({parentId, currentUserData: {id, username, image}}: Props
 
   return (
     <Fragment>
-      <PostThread image={image} username={username} isLoading={isLoading} register={register} prevImage={prevImage} handleDeleteImage={handleDeleteImage} handleImage={handleImage} file={file}/>
+      <PostThread 
+        file={file}
+        image={image} 
+        username={username} 
+        isLoading={isLoading} 
+        register={register} 
+        prevImage={prevImage} 
+        handleDeleteImage={handleDeleteImage} 
+        handleImage={handleImage}/>
       <DialogFooter className="flex-between mt-10">
-      {isLoading ? <p className="text-sm text-gray-500 mr-10 cursor-pointer">{isCommented === "allowed" ? "Aktifkan" : "Non aktifkan"} komentar</p> : null}
+        {isLoading ? <p className="text-sm text-gray-500 mr-10 cursor-pointer">
+            {isCommented === "allowed" ? "Aktifkan" : "Non aktifkan"} komentar</p> : null}
         {!isLoading ? <DropdownIsComment isCommented={isCommented} handleIsCommented={(value) => setIsCommented(value)}/> : null}
         <button 
           onClick={handleSubmit(handleUploadThread)} 

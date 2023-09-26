@@ -1,8 +1,19 @@
 import React from 'react'
 import { RiSearch2Line } from 'react-icons/ri'
-import { CreateOrganization } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs'
+import { notFound } from 'next/navigation'
+import { fetchUser } from '@/lib/actions/user.actions'
 
-const Community = () => {
+const Community = async () => {
+
+  const userLoggedIn = await currentUser()
+  if(!userLoggedIn) {
+    notFound()
+  }
+  const userData = await fetchUser(userLoggedIn.id)
+  if(!userData) {
+    notFound()
+  }
 
   return (
     <section className="w-full flex-center p-5">
@@ -11,7 +22,6 @@ const Community = () => {
           <RiSearch2Line className="text-xl text-gray-500 mr-5"/>
           <input type="text" className="flex-1 bg-transparent outline-none text-gray-500 border-none focus:ring-0" placeholder="Cari komunitas"/>
         </div>
-        <button className="mt-3 border border-gray-300 dark:border-gray-600 rounded-xl p-3 w-full">Buat komunitas baru</button>
       </div>
     </section>
   )

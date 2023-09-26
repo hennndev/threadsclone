@@ -1,50 +1,34 @@
 "use server"
 import { connectDB } from "../mongoose"
+import { utapi } from 'uploadthing/server'
+import { revalidatePath } from "next/cache"
 import { Users } from "../models/users.model"
 import { Threads } from "../models/threads.model"
-import { revalidatePath } from "next/cache"
-import { utapi } from 'uploadthing/server'
 
-
-export async function getThreads(byUser: null | string = null): Promise<Array<any>> {
+// get threads ✅
+export async function getThreads(userId: null | string = null): Promise<Array<any>> {
   await connectDB()
   // limit
   // skip
   let queries: Record<string, string | Record<string, boolean>> = {
     parentId: {$exists: false}
   }
-  if(byUser) {
-    queries.userPost = byUser
+  if(userId) {
+    queries.userPost = userId
   }
   try {
     const threads = await Threads.find(queries).sort({createdAt: "desc"}).select("-__v")
-      .populate({ path: "userPost", model: Users, select: "-__v -createdAt -onboarded -threads -communities"})
-      .populate({path: "likes", model: Users, select: "-__v -createdAt -onboarded -threads -communities"})
-      .populate({
-        path: "comments",
-        populate: [
-          {
-            path: "userPost",
-            model: Users,
-            select: "-__v -createdAt -onboarded -threads -communities"
-          },
-          {
-            path: "likes",
-            model: Users,
-            select: "-__v -createdAt -onboarded -threads -communities"
-          },
-        ]
-      })
+      .populate({ path: "userPost", model: Users, select: "-__v -createdAt -onboarded -threads -communities -activities"})
+      .populate({path: "likes", model: Users, select: "-__v -createdAt -onboarded -threads -communities -activities"})
     return threads
   } catch (error: any) {
     throw new Error(`Failed get threads: ${error.message}`)
   }
 }
 
-
+//get thread ✅
 export async function getThread(threadId: string): Promise<any> {
   await connectDB()
-  
   try {
     const thread = await Threads.findOne({_id: threadId}).select("-__v")
       .populate({
@@ -53,14 +37,24 @@ export async function getThread(threadId: string): Promise<any> {
         select: "-__v -createdAt -onboarded -threads -communities"
       })
       .populate({
+        path: "likes", 
+        model: Users, 
+        select: "-__v -createdAt -onboarded -threads -communities -activities"
+      })
+      .populate({
         path: "comments",
         model: Threads,
-        options: {sort: {createdAt: "desc"}},
+        options: {sort: {createdAt: "asc"}},
         populate: [
           {
             path: "userPost",
             model: Users,
-            select: "-__v -createdAt -onboarded -threads -communities"
+            select: "-__v -createdAt -onboarded -threads -communities -activities"
+          },
+          {
+            path: "likes", 
+            model: Users, 
+            select: "-__v -createdAt -onboarded -threads -communities -activities"
           }
         ]
       })
@@ -71,17 +65,19 @@ export async function getThread(threadId: string): Promise<any> {
   }
 }
 
+
+// upload new thread ✅
 export async function uploadThread({userId, path, ...dataParam}: {
   text: string | null
   userId: string
   image: {
-    imageKey?: string
+    imageKey: string
     imageUrl: string
   } | null,
   isCommented: string
   parentId?: string
   path: string
-}): Promise<void> {
+}) {
   await connectDB()
   try {
     const newThread = await Threads.create({
@@ -101,7 +97,6 @@ export async function uploadThread({userId, path, ...dataParam}: {
     } else {
       revalidatePath(path)
     }
-
   } catch (error: any) {
     throw new Error(`Failed upload new thread: ${error.message}`)
   }
@@ -159,7 +154,7 @@ export async function deleteThread(threadId: string, userId: string, imageKey: s
   }
 }
 
-
+// like thread ✅
 export async function likeThread(threadId: string, currentUserId: string, likeStatus: string, path: string) {
   await connectDB()
   try {

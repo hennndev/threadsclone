@@ -13,30 +13,25 @@ import { Dialog, DialogContent, DialogFooter, DialogTrigger } from "@/components
 
 type PropsTypes = {
   children: React.ReactNode
-  user: UserInfoTypes
+  currentUserData: UserInfoTypes
 }
 type FormTypes = {
   text: string
   image: FileList | null
 }
 
-const ModalCreateThread = ({children, user: {id, username, image, onboarded}}: PropsTypes) => {
-
+const ModalCreateThread = ({children, currentUserData: {id, username, image, onboarded}}: PropsTypes) => {
   const { toast } = useToast()
   const pathname = usePathname()
   const [open, setOpen] = useState<boolean>(false)
   const { startUpload } = useUploadThing("media")
   const [isCommented, setIsCommented] = useState("allowed")
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { file, setFile, prevImage, setPrevImage, handleImage } = usePreviewImage()
   const form = useForm<FormTypes>({
-    defaultValues: {
-      text: "",
-      image: null
-    }
+    defaultValues: { text: "", image: null }
   })
   const { register, setValue, watch, reset, handleSubmit } = form
-
+  const { file, setFile, prevImage, setPrevImage, handleImage } = usePreviewImage()
 
   const uploadAction = async ({text, id, image}: {
     text: string | null, 
@@ -60,7 +55,6 @@ const ModalCreateThread = ({children, user: {id, username, image, onboarded}}: P
       })
     })
   }
-  
   const handleUploadThread = async (values: FormTypes) => {
     setIsLoading(true)
     try {
@@ -86,14 +80,12 @@ const ModalCreateThread = ({children, user: {id, username, image, onboarded}}: P
     } catch (error) {
       setIsLoading(false)
       toast({
-        variant: "destructive",
         duration: 3000,
         title: "Gagal!",
         description: "Thread gagal dibuat",
       })
     }
   }
-
   const handleDeleteImage = () => {
     setFile([])
     setPrevImage(null)
@@ -104,10 +96,19 @@ const ModalCreateThread = ({children, user: {id, username, image, onboarded}}: P
     <Dialog open={onboarded ? open : false} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="w-[330px] xs:w-[400px] sm:w-[500px] md:w-[600px] max-h-[600px] overflow-y-auto">
-        <PostThread image={image} username={username} isLoading={isLoading} register={register} prevImage={prevImage} handleDeleteImage={handleDeleteImage} handleImage={handleImage} file={file}/>
+        <PostThread 
+          file={file}
+          image={image} 
+          username={username} 
+          isLoading={isLoading} 
+          register={register} 
+          prevImage={prevImage} 
+          handleImage={handleImage} 
+          handleDeleteImage={handleDeleteImage}/> 
         <DialogFooter className="flex-between mt-10">
-          {isLoading && <p className="text-sm text-gray-500 mr-10 cursor-pointer">{isCommented === "allowed" ? "Aktifkan" : "Non aktifkan"} komentar</p>}
-          {!isLoading && <DropdownIsComment isCommented={isCommented} handleIsCommented={(value) => setIsCommented(value)}/>}
+          {isLoading ? <p className="text-sm text-gray-500 mr-10 cursor-pointer">
+            {isCommented === "allowed" ? "Aktifkan" : "Non aktifkan"} komentar</p> : null}
+          {!isLoading ? <DropdownIsComment isCommented={isCommented} handleIsCommented={(value) => setIsCommented(value)}/> : null}
           <button onClick={handleSubmit(handleUploadThread)} disabled={(watch("text") || watch("image")) && !isLoading ? false : true} className={`button-thread ${watch("text") || watch("image") ? isLoading ? "text-gray-500 cursor-not-allowed" : "text-black dark:text-gray-100 font-semibold cursor-pointer" : "text-gray-500 cursor-not-allowed"} flexx`}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? "Loading" : "Kirim"}

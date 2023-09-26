@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent } from 'react'
 
 const usePreviewImage = () => {
   const [prevImage, setPrevImage] = useState<string | null>(null)
@@ -16,7 +16,6 @@ const usePreviewImage = () => {
       }
     }
   }
-
   return {
     prevImage,
     file,
@@ -25,5 +24,4 @@ const usePreviewImage = () => {
     handleImage
   }
 }
-
 export default usePreviewImage

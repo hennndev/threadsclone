@@ -21,22 +21,23 @@ export async function generateMetadata({params: {user}}: {params: {user: string}
 }
 
 const Profile = async ({params: {user}}: {params: {user: string}}) => {
-  const userLoggedIn: any = await currentUser()
+  const userLoggedIn = await currentUser()
+  if(!userLoggedIn) return null
   const currentUserDataLoggedIn: UserInfoTypes | null = await fetchUser(userLoggedIn.id) //user login
   const userData = await getUserData(user) //user by pathname
-  const threads = await getThreads(userData._id.toString())
-  
-  let currentUserData = {
-    id: currentUserDataLoggedIn?.id || userLoggedIn.id,
-    name: currentUserDataLoggedIn?.name || userLoggedIn.firstName,
-    username: currentUserDataLoggedIn?.username || userLoggedIn.username,
-    image: currentUserDataLoggedIn?.image || userLoggedIn.imageUrl,
-    onboarded: currentUserDataLoggedIn?.onboarded || false
-  }
-
   if(!userData) {
     notFound()
   }
+  const threads = await getThreads(userData._id.toString())
+  
+  let currentUserData = {
+    id: currentUserDataLoggedIn?.id, 
+    name: currentUserDataLoggedIn?.name ,
+    username: currentUserDataLoggedIn?.username ,
+    image: currentUserDataLoggedIn?.image,
+    onboarded: currentUserDataLoggedIn?.onboarded || false
+  }
+
 
   return (
     <section className="w-full flex-center p-5">
@@ -47,9 +48,9 @@ const Profile = async ({params: {user}}: {params: {user: string}}) => {
           userLoggedInData={currentUserData}/> 
         {threads.length > 0 ? (
           <Threads 
-            data={threads} //threads data
-            userLoggedInId={userLoggedIn.id.toString()} //id user login
-            currentUserData={userData as UserInfoTypes}/> //user data login dari database
+            data={threads}
+            userLoggedInId={userLoggedIn.id.toString()} 
+            currentUserData={currentUserData as UserInfoTypes}/>
         ) : (
           <div className="flex-center">
             <p className="text-sm">Belum ada thread yang dibuat</p>
