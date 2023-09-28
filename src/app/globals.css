@@ -100,5 +100,15 @@
   .button-thread {
     @apply border w-max border-gray-300 dark:border-[#2b2b2b] px-3 py-2 rounded-lg bg-transparent text-sm
   }
+
+
+
+  /* profile */
+  .profile-label {
+    @apply text-gray-200 text-[14px]
+  }
+  .profile-input {
+    @apply border-none outline-none text-gray-300
+  }
 }
 

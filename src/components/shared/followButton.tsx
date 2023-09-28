@@ -29,7 +29,7 @@ const FollowButton = ({isFollowed, userDataId, currentUserData, classes = ""}: P
       })
     } else {
       try {
-        await followUser(userDataId, currentUserData.id, isFollowed ? "unfollow" : "follow", pathname).then(() => {
+        await followUser(userDataId, currentUserData.username, currentUserData.id, isFollowed ? "unfollow" : "follow", pathname).then(() => {
           toast({
             duration: 5000,
             title: "Berhasil!",
@@ -45,6 +45,7 @@ const FollowButton = ({isFollowed, userDataId, currentUserData, classes = ""}: P
       }
     }
   }
+  console.log(currentUserData)
   return (
     <Button size="sm" className={`text-sm font-semibold ${classes}`} onClick={(e) => handleFollow(e)}>
       {isFollowed ? "Unfollow" : "Follow"}

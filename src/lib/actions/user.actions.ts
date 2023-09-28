@@ -1,5 +1,6 @@
 "use server"
 import { connectDB } from "../mongoose"
+import { utapi } from "uploadthing/server"
 import { revalidatePath } from "next/cache"
 import { Users } from "../models/users.model"
 
@@ -34,10 +35,12 @@ export async function fetchUser(id: string): Promise<UserInfoTypes | null> {
       return {
         id: user._id.toString(),
         name: user.name,
+        bio: user.bio,
         username: user.username,
         image: user.image.imageUrl,
+        imageKey: user.image.imageKey ? user.image.imageKey : null,
         onboarded: user.onboarded,
-        activities: user.activities.filter((activity: UserActivitiesTypes) => !activity.isRead)
+        // activities: user.activities.filter((activity: UserActivitiesTypes) => !activity.isRead)
       }
     } else return null
   } catch (error: any) {
@@ -64,9 +67,7 @@ export async function getUsersUsername() {
 export async function getUserActivities(id: string) {
   await connectDB()
   try {
-    const user = await Users.findOne({id: id}).populate({
-      path: 'activities.user',
-    })
+    const user = await Users.findOne({id: id})
     return user
   } catch (error: any) {
     throw new Error(`Failed get user activities: ${error.message}`)
@@ -109,41 +110,6 @@ export async function getUserData(username: string) {
   }
 }
 
-export async function checkUserExist(id: string): Promise<{
-  id: string
-  image: {
-    imageKey?: string
-    imageUrl: string
-  } | null
-  username: string
-  name: string
-  bio: string
-  onboarded: boolean
-} | null> {
-  await connectDB()
-  try {
-    const user = await Users.findOne({id: id})
-    if(user) {
-      return {
-        id: user?._id.toString(),
-        image: user?.image,
-        username: user?.username,
-        name: user?.name,
-        bio: user?.bio,
-        onboarded: user?.onboarded
-      }
-    } else {
-      return null
-    }
-  } catch (error: any) {
-    throw new Error(`Something new error: ${error.message}`)
-  }
-}
-
-
-
-
-
 
 
 export async function upsertUser({id, name, username, image, bio, path, oldImageKey = null}: {
@@ -164,39 +130,48 @@ export async function upsertUser({id, name, username, image, bio, path, oldImage
       await Users.findOneAndUpdate({id: id}, {
         name: name,
         username: username.toLowerCase(),
-        image,
-        bio,
+        image: image,
+        bio: bio,
         onboarded: true,
         $push: {activities: {
           text: "Selamat datang user baru, terimakasih sudah mendaftar di threads clone ini. -Hendra-",
-          isGreeting: true,
         }}
       }, {upsert: true})
       revalidatePath("/")
     } else {
-      await Users.findOneAndUpdate({id: id}, {
+      await Users.updateOne({_id: id}, {
         name: name,
         username: username.toLowerCase(),
-        image,
-        bio,
-        onboarded: true,
-      }, {upsert: true})
+        image: image,
+        bio: bio,
+      })
     }
-    if(path === "/profile/edit") {
-      revalidatePath(path)
+    if(oldImageKey) {
+      await utapi.deleteFiles(oldImageKey)
+    }
+    if(path !== "/onboarding") {
+      revalidatePath(`/${username}`)
     }    
   } catch (error: any) {
+    console.log(error)
     throw new Error(`Failed upsert user: ${error.message}`) 
   }
 }
 
 // follow user ✅
-export async function followUser(id: string, currentUserId: string, action: string, path: string) {
+export async function followUser(id: string, currentUserUsername: string, currentUserId: string, action: string, path: string) {
   await connectDB()
   try {
     if(action === "follow") {
       await Users.updateOne({_id: id, followers: {$ne: currentUserId}}, {
-        $push: {followers: currentUserId}
+        $push: {
+          followers: currentUserId,
+          activities: {
+            username: currentUserUsername,
+            type: "following",
+            text: "mengikutimu",
+          }
+        },
       }, {upsert: true})
     }
     if(action === "unfollow") {

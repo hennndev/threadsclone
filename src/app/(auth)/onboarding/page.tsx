@@ -1,41 +1,29 @@
 import React from 'react'
 import { redirect } from 'next/navigation'
 import { currentUser } from '@clerk/nextjs'
-import { checkUserExist } from '@/lib/actions/user.actions'
-import ProfileForm from '@/components/forms/profileForm'
 import { revalidatePath } from 'next/cache'
-
-interface UserInfoTypes {
-  id: string
-  image: {
-    imageKey?: string
-    imageUrl: string
-  } | null
-  username: string
-  name: string
-  bio: string
-  onboarded: boolean
-}
-
+import { fetchUser } from '@/lib/actions/user.actions'
+import ProfileForm from '@/components/forms/profileForm'
 
 export const metadata = {
   title: "Onboarding"
 }
 
 const Onboarding = async () => {
-
-  const user: any = await currentUser()
-  const userDB: UserInfoTypes | null = await checkUserExist(user.id)
+  const userLoggedin = await currentUser()
+  if(!userLoggedin) {
+    return null
+  }
+  const user: UserInfoTypes | null = await fetchUser(userLoggedin.id)
   
   const userData = {
-    id: userDB?.id || user.id,
-    image: userDB?.image?.imageUrl || user?.imageUrl,
-    username: userDB?.username || user?.username,
-    name: userDB?.name || user?.firstName,
-    bio: userDB?.bio || "",
-    onboarded: userDB?.onboarded || false
+    id: user?.id.toString() || userLoggedin.id,
+    image: user?.image.toString() || userLoggedin?.imageUrl,
+    username: user?.username || userLoggedin?.username || "",
+    name: user?.name || userLoggedin?.firstName || "",
+    bio: user?.bio || "",
   }
-  if(userDB) {
+  if(user) {
     revalidatePath("/")
     redirect("/")
   }
@@ -52,5 +40,4 @@ const Onboarding = async () => {
     </main>
   )
 }
-
 export default Onboarding

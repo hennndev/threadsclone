@@ -7,11 +7,12 @@ import { DialogFooter } from '../ui/dialog'
 import PostThread from '../forms/postThread'
 import { usePathname } from 'next/navigation'
 import usePreviewImage from '@/hooks/usePreviewImage'
-import { uploadThread } from '@/lib/actions/threads.actions'
+import { uploadThreadComment } from '@/lib/actions/threads.actions'
 import { useUploadThing } from '@/lib/functions/uploadthing'
 import DropdownIsComment from '@/components/threads/dropdownIsComment'
 
 type PropsTypes = {
+  usernamePost: string
   parentId: string
   currentUserData: UserInfoTypes
 }
@@ -20,8 +21,7 @@ type FormTypes = {
   image: FileList | null
 }
 
-const CommentThread = ({parentId, currentUserData: {id, username, image}}: PropsTypes) => {
-
+const CommentThread = ({parentId, usernamePost, currentUserData: {id, username, image}}: PropsTypes) => {
   const { toast } = useToast()
   const pathname = usePathname()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -44,7 +44,14 @@ const CommentThread = ({parentId, currentUserData: {id, username, image}}: Props
       imageUrl: string
     } | null
   }) => {
-    await uploadThread({ text, userId: id, parentId, image, isCommented, path: pathname })
+    await uploadThreadComment({ 
+      text, 
+      userId: id, 
+      parentId, 
+      image, 
+      isCommented,
+      usernamePost, 
+      path: pathname })
     .then(() => {
       setIsLoading(false)
       reset()

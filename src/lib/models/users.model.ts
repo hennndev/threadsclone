@@ -51,9 +51,8 @@ const userSchema = new Schema({
   ],
   activities: [
     {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Users"
+      username: {
+        type: String,
       },
       routeLink: {
         type: String,
@@ -62,9 +61,10 @@ const userSchema = new Schema({
         type: String,
         required: true
       },
-      isGreeting: {
-        type: Boolean,
-        default: false
+      type: {
+        type: String,
+        enum: ["greeting", "comment", "following"],
+        default: "greeting"
       },
       isRead: {
         type: Boolean,

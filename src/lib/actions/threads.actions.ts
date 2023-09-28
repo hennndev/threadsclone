@@ -67,8 +67,53 @@ export async function getThread(threadId: string): Promise<any> {
 
 
 // upload new thread ✅
+export async function uploadThreadComment({userId, path, usernamePost, ...dataParam}: {
+  text: string | null 
+  userId: string
+  usernamePost?: string
+  routeLink?: string
+  image: {
+    imageKey: string
+    imageUrl: string
+  } | null,
+  isCommented: string
+  parentId?: string
+  path: string
+}) {
+  await connectDB()
+  try {
+    const newThread = await Threads.create({
+      userPost: userId,
+      ...dataParam
+    })
+    await Users.updateOne({username: usernamePost}, {
+      $push: {activities: {
+        username: usernamePost,
+        type: "comment",
+        text: dataParam.text,
+        routeLink: `/${usernamePost}/threads/${dataParam.parentId}`,
+      }}
+    })
+    await Threads.updateOne({_id: dataParam.parentId}, {
+      $push: {comments: newThread._id}
+    })
+    await Users.updateOne({_id: userId}, {
+      $push: {threads: newThread._id}
+    })
+    if(path !== "/" && path !== '/[user]') {
+      revalidatePath("/")
+    } else {
+      revalidatePath(path)
+    }
+  } catch (error: any) {
+    throw new Error(`Failed upload new thread: ${error.message}`)
+  }
+}
+
+
+// upload new thread ✅
 export async function uploadThread({userId, path, ...dataParam}: {
-  text: string | null
+  text: string | null 
   userId: string
   image: {
     imageKey: string
@@ -87,11 +132,6 @@ export async function uploadThread({userId, path, ...dataParam}: {
     await Users.updateOne({_id: userId}, {
       $push: {threads: newThread._id}
     })
-    if(dataParam.parentId) {
-      await Threads.updateOne({_id: dataParam.parentId}, {
-        $push: {comments: newThread._id}
-      })
-    }
     if(path !== "/" && path !== '/[user]') {
       revalidatePath("/")
     } else {

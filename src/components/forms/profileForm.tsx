@@ -9,28 +9,22 @@ import { Input } from '@/components/ui/input'
 import { usePathname } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserValidation } from '@/lib/validations/user'
 import { upsertUser } from '@/lib/actions/user.actions'
 import { useUploadThing } from '@/lib/functions/uploadthing'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
-
-interface PropsTypes {
-  userData: {
-    id: string
-    objectId?: string
-    image: string
-    username: string
-    name: string
-    bio: string
-    onboarded: boolean
-  },
+type PropsTypes = {
+  isThemeClasses?: string
+  userData: UserInfoTypes
   btnTitle: string
 }
 
-const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
+const ProfileForm = ({isThemeClasses, userData, btnTitle}: PropsTypes) => {
 
+  const {toast} = useToast()
   const router = useRouter()
   const pathname = usePathname()
   const [file, setFile] = useState<File[]>([])
@@ -59,6 +53,16 @@ const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
     }
   }
 
+  const toastSuccess = () => {
+    if(pathname !== "onboarding") {
+      toast({
+        duration: 3000,
+        title: "Berhasil",
+        description: "Profil berhasil diedit"
+      })
+    }
+  }
+
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
     setIsLoading(true)
     const blob = values.profile_photo
@@ -67,7 +71,7 @@ const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
         const imgResult = await startUpload(file)
         if(imgResult) {
           await upsertUser({
-            id: userData.id,
+            id: userData.id.toString(),
             name: values.name,
             username: values.username,
             image: {
@@ -78,22 +82,33 @@ const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
             bio: values.bio
           }).then(() => {
             setIsLoading(false)
-            router.push("/")
+            toastSuccess()
+            if(pathname === "/onboarding") {
+              router.push("/")
+            } else {
+              router.push(`/${values.username}`)
+            }
           })
         }
       } else {
         await upsertUser({
-          id: userData.id,
+          id: userData.id.toString(),
           name: values.name,
           username: values.username,
           image: {
-            imageUrl: values.profile_photo
+            imageKey: userData.imageKey || null || undefined,
+            imageUrl: userData.image
           },
           path: pathname,
           bio: values.bio
         }).then(() => {
           setIsLoading(false)
-          router.push("/")
+          toastSuccess()
+          if(pathname === "/onboarding") {
+            router.push("/")
+          } else {
+            router.push(`/${values.username}`)
+          }
         })
         }
     }
@@ -118,11 +133,11 @@ const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
                   </div>
                 )}
               </FormLabel>
-              <FormLabel htmlFor="profile_photo" className="text-center text-blue-300 cursor-pointer hover:underline">
+              <FormLabel htmlFor="profile_photo" className="text-center text-blue-500 dark:text-blue-300 cursor-pointer hover:underline">
                 Upload Image
               </FormLabel>
               <FormControl className="flex-1">
-                <Input type="file" accept="image/*" id="profile_photo" className="bg-[#151515] border-none outline-none text-gray-300 hidden" placeholder="Your name" onChange={(e) => handleImage(e, field.onChange)} />
+                <Input type="file" accept="image/*" id="profile_photo" className="profile-input hidden" placeholder="Your name" onChange={(e) => handleImage(e, field.onChange)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,9 +148,9 @@ const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-200 text-[14px]">Name</FormLabel>
+              <FormLabel className={`profile-label ${isThemeClasses ? "text-gray-700 dark:text-gray-200" : ""}`}>Name</FormLabel>
               <FormControl>
-                <Input className="bg-[#151515] border-none outline-none text-gray-300" placeholder="Your name" {...field} />
+                <Input className={`profile-input ${isThemeClasses ? isThemeClasses : "bg-[#151515]"}`} placeholder="Your name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -146,9 +161,9 @@ const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-200 text-[14px]">Username</FormLabel>
+              <FormLabel className={`profile-label ${isThemeClasses ? "text-gray-700 dark:text-gray-200" : ""}`}>Username</FormLabel>
               <FormControl>
-                <Input className="bg-[#151515] border-none outline-none text-gray-300" placeholder="shadcn" {...field} />
+                <Input className={`profile-input ${isThemeClasses ? isThemeClasses : "bg-[#151515]"}`} placeholder="shadcn" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -159,22 +174,21 @@ const ProfileForm = ({userData, btnTitle}: PropsTypes) => {
           name="bio"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-200 text-[14px]">Bio</FormLabel>
+              <FormLabel className={`profile-label ${isThemeClasses ? "text-gray-700 dark:text-gray-200" : ""}`}>Bio</FormLabel>
               <FormControl>
-                <Textarea rows={8} className="bg-[#151515] border-none outline-none text-gray-300" placeholder="Your bio" {...field} />
+                <Textarea rows={8} className={`profile-input ${isThemeClasses ? isThemeClasses : "bg-[#151515]"}`} placeholder="Your bio" {...field} />
               </FormControl>
               <FormDescription>
-                *Optional. You can skip this field
+                *Optional. Kamu bisa mengabaikan kolom ini
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        {!isLoading ? <Button variant="default" className="w-full" type="submit">{btnTitle}</Button> : ""}
-        {isLoading ? <Button disabled>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Please wait
-        </Button> : ""}
+        <Button disabled={isLoading} className="w-full" type="submit">
+          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          {isLoading ? "Please wait" : btnTitle}
+        </Button>
       </form>
     </Form>
   )

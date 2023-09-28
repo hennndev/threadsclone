@@ -53,8 +53,10 @@ interface UserInfoTypes {
   id: string
   name: string
   username: string
-  image: string
-  onboarded: boolean
+  bio: string
+  image: string 
+  imageKey?: string | null
+  onboarded?: boolean
   activities?: number | UserActivitiesTypes[]
 }
 
