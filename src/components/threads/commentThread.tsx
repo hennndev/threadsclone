@@ -50,7 +50,8 @@ const CommentThread = ({parentId, usernamePost, currentUserData: {id, username, 
       parentId, 
       image, 
       isCommented,
-      usernamePost, 
+      commentUsernamePost: username,
+      usernamePost: usernamePost, 
       path: pathname })
     .then(() => {
       setIsLoading(false)

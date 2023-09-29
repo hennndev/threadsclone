@@ -67,11 +67,11 @@ export async function getThread(threadId: string): Promise<any> {
 
 
 // upload new thread ✅
-export async function uploadThreadComment({userId, path, usernamePost, ...dataParam}: {
+export async function uploadThreadComment({userId, path, commentUsernamePost, usernamePost, ...dataParam}: {
   text: string | null 
   userId: string
+  commentUsernamePost?: string
   usernamePost?: string
-  routeLink?: string
   image: {
     imageKey: string
     imageUrl: string
@@ -88,7 +88,7 @@ export async function uploadThreadComment({userId, path, usernamePost, ...dataPa
     })
     await Users.updateOne({username: usernamePost}, {
       $push: {activities: {
-        username: usernamePost,
+        username: commentUsernamePost,
         type: "comment",
         text: dataParam.text,
         routeLink: `/${usernamePost}/threads/${dataParam.parentId}`,
